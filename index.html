@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="theme-color" content="#14110c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC&display=swap" rel="stylesheet">
+<title>凡圖百鍊生｜AI 人像精修短指令工具 v1.0</title>
+<style>
+@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+:root{--bg:#f3ede2;--paper:#fffdf9;--ink:#26231c;--muted:#7b7566;--line:#e4dac8;--accent:#8a6a2b;--accent2:#f1e6cf;--green:#3c6b52;--gold1:#f8e9b9;--gold2:#d8b46b;--gold3:#a87c2c;--night:#14110c;--safe-bottom:env(safe-area-inset-bottom,0px);--kai:"LXGW WenKai TC","DFKai-SB","標楷體",serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(#e9e0d0,var(--bg) 360px);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans TC","PingFang TC",sans-serif;line-height:1.5;padding-bottom:calc(84px + var(--safe-bottom))}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
+.wrap{max-width:760px;margin:auto;padding:14px 12px 20px}
+
+/* ===== Hero：墨黑金幕 ===== */
+.hero{position:relative;overflow:hidden;text-align:center;padding:34px 14px 24px;margin-bottom:12px;border-radius:24px;color:#f2e8d0;border:1px solid rgba(216,180,107,.5);background:radial-gradient(circle at var(--mx,50%) var(--my,22%),rgba(216,180,107,.28),transparent 46%),repeating-radial-gradient(circle at 50% 22%,transparent 0 17px,rgba(216,180,107,.055) 17px 18px),var(--night);box-shadow:0 18px 40px -22px rgba(30,20,5,.9),inset 0 0 0 1px rgba(255,240,190,.06)}
+.dust{position:absolute;inset:0;pointer-events:none}
+.dust i{position:absolute;bottom:-8px;left:var(--x);width:var(--s);height:var(--s);border-radius:50%;background:#ecc97a;box-shadow:0 0 7px 1px rgba(236,201,122,.7);opacity:0;animation:dustUp var(--d) linear var(--t) infinite}
+@keyframes dustUp{0%{opacity:0;transform:translate(0,0)}15%{opacity:.9}100%{opacity:0;transform:translate(16px,-300px)}}
+
+.seal-wrap{position:relative;width:96px;height:96px;margin:0 auto 16px;transform:perspective(500px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s ease-out}
+.seal-wrap::before{content:"";position:absolute;inset:-28px;border-radius:50%;background:radial-gradient(circle,rgba(236,196,110,.4),transparent 65%);animation:halo 4.5s ease-in-out infinite}
+.seal-wrap::after{content:"";position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(244,214,134,.85);pointer-events:none;animation:ring 1.6s .75s ease-out both}
+.seal-wrap.burst::after{animation:ring2 1s ease-out both}
+.seal-wrap.burst .glint{animation:glint2 1s ease-in-out both}
+.seal{position:relative;width:100%;height:100%;border-radius:50%;overflow:hidden;cursor:pointer;background:conic-gradient(from var(--a),#7a5518,var(--gold1),#c9a152,#fff3c4,var(--gold3),#f5e4b0,#7a5518);box-shadow:0 12px 28px -8px rgba(0,0,0,.85),inset 0 0 0 1px rgba(255,240,190,.45);animation:stamp 1.1s cubic-bezier(.18,.8,.25,1.2) both,spin 9s linear infinite}
+.seal::before{content:"";position:absolute;inset:7px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#2e2518,#100c07 72%);box-shadow:inset 0 2px 7px #000,0 0 0 1px rgba(255,225,150,.55)}
+.seal::after{content:"";position:absolute;inset:12px;border-radius:50%;border:1px dashed rgba(240,210,130,.55);animation:turn 40s linear infinite}
+.seal-face{position:absolute;inset:0;z-index:1;width:100%;height:100%;filter:drop-shadow(0 1px 1px rgba(0,0,0,.75))}
+.glint{position:absolute;inset:0;z-index:2;background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.7) 50%,transparent 62%);transform:translateX(-130%);animation:glint 6s 2s ease-in-out infinite}
+.orbit{position:absolute;inset:-15px;border-radius:50%;pointer-events:none;animation:turn 14s linear infinite}
+.orbit i,.orbit::after{content:"";position:absolute;left:50%;width:8px;height:8px;margin-left:-4px;background:#ffeaa3;transform:rotate(45deg);box-shadow:0 0 10px 2px rgba(255,220,130,.85)}
+.orbit i{top:-4px}
+.orbit::after{bottom:-3px;width:5px;height:5px;margin-left:-2.5px;opacity:.7}
+
+.hero h1{display:table;margin:2px auto 8px;font:400 clamp(30px,8.5vw,44px)/1.2 var(--kai);letter-spacing:.14em;padding-left:.14em;background:linear-gradient(105deg,#d2ac5c 0%,#fff0b8 30%,#cfa24c 48%,#fff6d2 60%,#c8a04f 100%) 100% 0/240% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:ink 1.2s .3s ease-out both,shine 7s 2.6s ease-in-out infinite}
+.tagline{margin:0;text-wrap:balance;color:#cbb78c;font:400 14px var(--kai);letter-spacing:.08em;animation:settle .8s .7s ease-out both}
+.sub{display:table;margin:14px auto 0;padding:6px 16px;border:1px solid rgba(216,180,107,.45);border-radius:16px;line-height:1.6;background:rgba(216,180,107,.08);color:#e6d6ae;font-size:11.5px;animation:settle .8s .9s ease-out both}
+@keyframes stamp{0%{opacity:0;transform:translateY(-16px) scale(1.4) rotate(-10deg);filter:blur(3px)}68%{opacity:1;transform:translateY(2px) scale(.94) rotate(2deg);filter:none}100%{opacity:1;transform:none}}
+@keyframes spin{to{--a:360deg}}
+@keyframes turn{to{transform:rotate(360deg)}}
+@keyframes halo{0%,100%{transform:scale(.9);opacity:.55}50%{transform:scale(1.15);opacity:1}}
+@keyframes ring{from{transform:scale(1);opacity:.9}to{transform:scale(2.2);opacity:0}}
+@keyframes ring2{from{transform:scale(1);opacity:.9}to{transform:scale(2.2);opacity:0}}
+@keyframes glint{0%,60%{transform:translateX(-130%)}100%{transform:translateX(130%)}}
+@keyframes glint2{from{transform:translateX(-130%)}to{transform:translateX(130%)}}
+@keyframes shine{0%,55%{background-position:100% 0}100%{background-position:0 0}}
+@keyframes ink{from{opacity:0;clip-path:inset(0 100% 0 0);transform:translateY(7px)}to{opacity:1;clip-path:inset(0);transform:none}}
+@keyframes settle{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ===== 分頁：金色滑動膠囊 ===== */
+.tabs{position:sticky;top:8px;z-index:60;display:grid;grid-template-columns:1fr 1fr;margin:12px 0 0;padding:4px;border-radius:15px;background:var(--night);border:1px solid rgba(216,180,107,.4);box-shadow:0 10px 24px -12px rgba(20,12,0,.7)}
+.tabs::before{content:"";position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:11px;background:linear-gradient(135deg,#f6e3a6,#d6b062 50%,#b98c3a);box-shadow:inset 0 1px 0 rgba(255,255,255,.6);transition:transform .38s cubic-bezier(.3,.9,.3,1.12)}
+.tabs:has(#sceneTabBtn.active)::before{transform:translateX(100%)}
+.tab-btn{position:relative;z-index:1;border:0;background:transparent;padding:11px 8px;font:inherit;font-size:14.5px;font-weight:650;color:#cdb98f;cursor:pointer;transition:color .3s;-webkit-tap-highlight-color:transparent}
+.tab-btn.active{color:#2a1f0c}
+@supports not selector(:has(*)){.tabs::before{display:none}.tab-btn.active{background:linear-gradient(135deg,#f6e3a6,#c9a152);border-radius:11px}}
+.tab-panel{min-width:0}
+
+/* ===== 卡片 ===== */
+.panel{position:relative;overflow:hidden;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:15px 14px 14px;margin:12px 0;box-shadow:0 10px 26px -18px rgba(60,40,10,.35)}
+.panel::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold2) 30%,var(--gold1) 50%,var(--gold2) 70%,transparent)}
+.panel h2{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:0 0 10px;font:400 17px var(--kai);letter-spacing:.04em}
+.num{display:inline-grid;place-items:center;min-width:26px;height:26px;border-radius:50%;background:linear-gradient(145deg,#f8e9b9,#d8b46b 55%,#b98c3a);border:1px solid #a77a2d;box-shadow:inset 0 1px 0 rgba(255,255,255,.6);color:#3a2a0e;font:700 12px system-ui,sans-serif}
+.hint{font:400 11.5px system-ui,sans-serif;color:var(--muted);letter-spacing:0}
+.desc{font-size:12.5px;color:var(--muted);margin:-2px 0 9px}
+
+.presets{display:flex;flex-wrap:wrap;gap:7px}
+.pill{padding:6px 13px;border-radius:999px;border:1px solid #d9cdb6;background:#fbf6ea;color:#5d4c30;font:inherit;font-size:12.5px;cursor:pointer;transition:.2s;-webkit-tap-highlight-color:transparent}
+.pill:active{transform:scale(.95)}
+.pill.active{background:linear-gradient(135deg,#f6e3a6,#d6b062);border-color:#a77a2d;color:#2a1f0c;font-weight:650;box-shadow:0 5px 12px -6px rgba(150,105,30,.8)}
+
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.field label{display:block;margin-bottom:4px;font-size:12px;color:var(--muted)}
+.field select,.scene-select,textarea,input[type=text],.output{width:100%;padding:10px 12px;border:1px solid #ddd2bf;border-radius:11px;background:#fffefa;color:var(--ink);font:inherit;font-size:14px;transition:border-color .2s,box-shadow .2s}
+.field select:focus,.scene-select:focus,textarea:focus,input[type=text]:focus{outline:0;border-color:var(--gold3);box-shadow:0 0 0 3px rgba(216,180,107,.28)}
+.field select,.scene-select{appearance:none;-webkit-appearance:none;padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23a77a2d' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center}
+textarea{resize:vertical}
+
+.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.opt{position:relative;overflow:hidden;display:flex;align-items:flex-start;gap:8px;min-height:46px;padding:8px 9px;border:1.5px solid var(--line);border-radius:12px;background:#fffefa;font-size:13px;cursor:pointer;user-select:none;transition:border-color .2s,background .2s,box-shadow .2s,transform .2s;-webkit-tap-highlight-color:transparent}
+.opt:has(input:checked){border-color:#b58a3b;background:linear-gradient(145deg,#fbf3dc,#f2e1b6);box-shadow:inset 0 0 0 1px rgba(255,244,200,.9),0 6px 14px -8px rgba(150,105,30,.65)}
+.opt:has(input:checked)::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.7) 50%,transparent 60%);animation:glint2 .7s ease-out both;pointer-events:none}
+.opt input{appearance:none;-webkit-appearance:none;position:relative;flex:0 0 17px;width:17px;height:17px;margin:1px 0 0;border:1.5px solid #bba98a;border-radius:5px;background:#fff;transition:.2s}
+.opt input:checked{background:linear-gradient(145deg,#f8e9b9,#c9a152);border-color:#9b7228;animation:tick .3s ease-out}
+.opt input:checked::after{content:"✓";position:absolute;left:2px;top:-2.5px;color:#3a2a0e;font-size:12px;font-weight:800}
+@keyframes tick{0%{transform:scale(.6)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+.opt span{display:block;min-width:0;line-height:1.3}
+.opt .cmd{margin-top:2px;color:var(--accent);opacity:.9;font:10.5px ui-monospace,"SF Mono",Menlo,monospace}
+@media(hover:hover) and (pointer:fine){.opt:hover{border-color:var(--gold2);transform:translateY(-1px)}.pill:hover{border-color:var(--gold3)}}
+
+.subhead{margin:12px 0 6px;font:400 14px var(--kai);color:#5d4c30}
+.warning{margin-top:8px;padding:8px 11px;border-left:3px solid var(--gold2);border-radius:0 9px 9px 0;background:#f8f1e1;font-size:12px;color:#655741}
+.scene-note{margin:7px 0 0;font-size:12px;color:var(--muted)}
+#custom{min-height:58px}
+.output{min-height:170px;font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:13px;line-height:1.6;background:linear-gradient(#fffdf6,#fbf6e8)}
+.output.motion-updated{animation:flash .9s ease-out}
+@keyframes flash{0%{border-color:var(--gold3);box-shadow:0 0 0 0 rgba(216,180,107,.65)}100%{box-shadow:0 0 0 12px rgba(216,180,107,0)}}
+
+/* ===== 按鈕 ===== */
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.btn{position:relative;overflow:hidden;isolation:isolate;border:1px solid transparent;border-radius:12px;padding:11px 16px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .2s;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.97)}
+.primary{flex:1;color:#2a1f0c;border-color:#9b7228;background:linear-gradient(135deg,#f6e3a6,#d6b062 48%,#b98c3a);box-shadow:0 8px 18px -10px rgba(150,105,30,.9),inset 0 1px 0 rgba(255,255,255,.6)}
+.primary::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.6) 50%,transparent 60%);transform:translateX(-130%);animation:glint 6s 3s ease-in-out infinite}
+.secondary{background:#efe6d5;border-color:#d8c9ae;color:#4a3b22}
+.motion-ripple{position:absolute;left:var(--rx);top:var(--ry);width:24px;height:24px;border-radius:50%;pointer-events:none;background:rgba(255,255,255,.45);transform:translate(-50%,-50%) scale(0);animation:ripple .55s ease-out forwards}
+@keyframes ripple{to{transform:translate(-50%,-50%) scale(5);opacity:0}}
+@media(hover:hover) and (pointer:fine){.primary:hover{box-shadow:0 12px 22px -10px rgba(150,105,30,1),inset 0 1px 0 rgba(255,255,255,.6)}}
+
+.summary{display:flex;flex-wrap:wrap;gap:5px 6px;margin-bottom:8px;font-size:11.5px;color:var(--muted)}
+.summary span{padding:1px 10px;border-radius:999px;background:#f6eddb}
+.summary b{color:var(--accent);font-weight:700}
+.status{min-height:18px;margin-top:5px;font-size:12px;color:var(--green)}
+.auto-row{display:flex;align-items:center;gap:7px;margin:8px 0 2px;font-size:12.5px;color:var(--muted)}
+.auto-row input{width:15px;height:15px;accent-color:#b98c3a}
+
+.sticky-bar{position:fixed;left:0;right:0;bottom:0;z-index:100;display:flex;gap:7px;padding:9px 12px calc(9px + var(--safe-bottom));background:rgba(20,17,12,.95);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid rgba(216,180,107,.4)}
+.sticky-bar .btn{flex:1;padding:12px 10px;font-size:14.5px}
+.sticky-bar .secondary{flex:0 0 auto;min-width:64px;background:rgba(255,255,255,.07);border-color:rgba(216,180,107,.35);color:#e9dcc0}
+.footer{padding:14px 8px 6px;text-align:center;color:var(--muted);font-size:11px;line-height:1.5}
+.footer::before{content:"◆";display:block;margin-bottom:6px;color:var(--gold2);font-size:9px}
+
+@media(max-width:560px){.fields{grid-template-columns:1fr}.options{gap:6px}.panel{padding:14px 11px 12px}.opt{font-size:12.5px}.opt .cmd{font-size:10px}}
+@media(min-width:640px){body{padding-bottom:20px}.sticky-bar{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.dust{display:none}}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<header class="hero" id="hero">
+  <div class="seal-wrap" id="sealWrap">
+    <div class="orbit" aria-hidden="true"><i></i></div>
+    <div class="seal" id="seal" title="點一下"><svg class="seal-face" viewBox="0 0 96 96" role="img" aria-label="凡"><defs><linearGradient id="gf" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="96" y2="96"><stop offset="0" stop-color="#c79a43"/><stop offset=".3" stop-color="#fff1b8"/><stop offset=".5" stop-color="#d7ae5a"/><stop offset=".62" stop-color="#fff6cf"/><stop offset="1" stop-color="#b88a36"/><animateTransform attributeName="gradientTransform" type="translate" values="-60 -60;60 60;-60 -60" dur="6s" repeatCount="indefinite"/></linearGradient></defs><text x="48" y="48" text-anchor="middle" dominant-baseline="central" font-size="42" font-family="LXGW WenKai TC,DFKai-SB,標楷體,serif" fill="url(#gf)">凡</text></svg><span class="glint"></span></div>
+  </div>
+  <h1>凡圖百鍊生</h1>
+  <p class="tagline">千錘百鍊，只為留下更美好的模樣。</p>
+  <div class="sub">短指令版 · v1.0 百鍊整合版 · 選中文 · 輸出短指令</div>
+</header>
+
+<!-- 快速預設 -->
+<section class="panel">
+  <h2><span class="num">0</span>快速預設</h2>
+  <div class="presets" id="presets">
+    <button type="button" class="pill" data-preset="couple">夫妻自然</button>
+    <button type="button" class="pill" data-preset="family">合照／家庭</button>
+    <button type="button" class="pill" data-preset="male">單人男性</button>
+    <button type="button" class="pill" data-preset="female">單人女性</button>
+    <button type="button" class="pill" data-preset="travel">旅遊</button>
+    <button type="button" class="pill" data-preset="wedding">婚紗</button>
+    <button type="button" class="pill" data-preset="clear">清空</button>
+  </div>
+</section>
+
+<!-- 1 基礎 -->
+<section class="panel">
+  <h2><span class="num">1</span>平台 · 類型 · 風格</h2>
+  <div class="fields">
+    <div class="field">
+      <label for="platform">平台</label>
+      <select id="platform">
+        <option value="general">通用</option>
+        <option value="chatgpt">ChatGPT</option>
+        <option value="gemini">Gemini</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="photoType">照片類型</label>
+      <select id="photoType">
+        <option value="couple">夫妻／情侶</option>
+        <option value="male">單人男性</option>
+        <option value="female">單人女性</option>
+        <option value="travel">旅遊人像</option>
+        <option value="wedding">婚紗／婚禮</option>
+        <option value="group">合照／家庭／多人</option>
+        <option value="life">生活照</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="style">風格</label>
+      <select id="style">
+        <option value="natural">自然耐看</option>
+        <option value="polish">精緻上相</option>
+        <option value="jp">日系清新</option>
+        <option value="soft">柔和寫真</option>
+        <option value="wedding">婚紗柔光</option>
+        <option value="cinematic">電影感</option>
+        <option value="film">復古底片</option>
+        <option value="warm">暖色旅拍</option>
+        <option value="cool">冷調質感</option>
+        <option value="bright">清爽明亮</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="intensity">強度</label>
+      <select id="intensity">
+        <option value="light">輕度自然</option>
+        <option value="medium">中度精修</option>
+        <option value="strong">加強精修</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<nav class="tabs" role="tablist" aria-label="編輯功能分頁">
+  <button type="button" class="tab-btn active" id="personTabBtn" role="tab" aria-selected="true" aria-controls="personTab">人物修改</button>
+  <button type="button" class="tab-btn" id="sceneTabBtn" role="tab" aria-selected="false" aria-controls="sceneTab">特效／場景</button>
+</nav>
+<div id="personTab" class="tab-panel" role="tabpanel" aria-labelledby="personTabBtn">
+<!-- 2 身形 -->
+<section class="panel">
+  <h2><span class="num">2</span>身形與姿態 <span class="hint">可複選</span></h2>
+  <div class="options" id="bodyOpts">
+    <label class="opt"><input type="checkbox" name="body" value="/slimbody"><span>全身自然顯瘦<span class="cmd">/slimbody</span></span></label>
+    <label class="opt"><input type="checkbox" name="body" value="/fixwaist"><span>腰部修細<span class="cmd">/fixwaist</span></span></label>
+    <label class="opt"><input type="checkbox" name="body" value="/waistline"><span>強化腰線<span class="cmd">/waistline</span></span></label>
+    <label class="opt"><input type="checkbox" name="body" value="/flattummy"><span>腰腹收縮<span class="cmd">/flattummy</span></span></label>
+    <label class="opt"><input type="checkbox" name="body" value="/flatclothes"><span>衣服線條平坦<span class="cmd">/flatclothes</span></span></label>
+    <label class="opt"><input type="checkbox" name="body" value="/longlegs"><span>視覺拉長腿<span class="cmd">/longlegs</span></span></label>
+    <label class="opt"><input type="checkbox" name="body" value="/taller"><span>視覺增高<span class="cmd">/taller</span></span></label>
+    <label class="opt"><input type="checkbox" name="body" value="/fixlegs"><span>腿部修飾<span class="cmd">/fixlegs</span></span></label>
+    <label class="opt"><input type="checkbox" name="body" value="/fixarms"><span>手臂修飾<span class="cmd">/fixarms</span></span></label>
+    <label class="opt"><input type="checkbox" name="body" value="/headbody"><span>優化頭身比例<span class="cmd">/headbody</span></span></label>
+    <label class="opt"><input type="checkbox" name="body" value="/fixposture"><span>改善體態姿勢<span class="cmd">/fixposture</span></span></label>
+    <label class="opt"><input type="checkbox" name="body" value="/fixshoulder"><span>肩線與上半身<span class="cmd">/fixshoulder</span></span></label>
+    <label class="opt"><input type="checkbox" name="body" value="/fixclothes"><span>服裝線條整理<span class="cmd">/fixclothes</span></span></label>
+    <label class="opt"><input type="checkbox" name="body" value="/fixhands"><span>手部自然修飾<span class="cmd">/fixhands</span></span></label>
+  </div>
+</section>
+
+<!-- 3 男性 -->
+<section class="panel">
+  <h2><span class="num">3</span>男性修容 <span class="hint">可複選 · 只作用男性</span></h2>
+  <div class="options" id="maleOpts">
+    <label class="opt"><input type="checkbox" name="male" value="/male_contour" checked><span>柔化方正輪廓<span class="cmd">/male_contour</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_jaw" checked><span>修整臉部肉感<span class="cmd">/male_jaw</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_undereye" checked><span>減輕眼袋疲憊<span class="cmd">/male_undereye</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_face"><span>臉型比例微調<span class="cmd">/male_face</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_jawline"><span>下顎線與頸部<span class="cmd">/male_jawline</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_brow"><span>眉眼光影調整<span class="cmd">/male_brow</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_nasolabial"><span>淡化法令紋<span class="cmd">/male_nasolabial</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_frown"><span>淡化皺眉紋<span class="cmd">/male_frown</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_forehead"><span>淡化額頭細紋<span class="cmd">/male_forehead</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_eyelines"><span>淡化眼周細紋<span class="cmd">/male_eyelines</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_lines"><span>淡化臉部細紋<span class="cmd">/male_lines</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_skin"><span>男性膚質精修<span class="cmd">/male_skin</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_oil"><span>油光與膚色<span class="cmd">/male_oil</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_energy"><span>提升精神氣色<span class="cmd">/male_energy</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_keep"><span>保留男性特徵<span class="cmd">/male_keep</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_blemish"><span>局部瑕疵修整<span class="cmd">/male_blemish</span></span></label>
+  </div>
+</section>
+
+<!-- 4 女性 -->
+<section class="panel">
+  <h2><span class="num">4</span>女性精修 <span class="hint">可複選 · 只作用女性</span></h2>
+  <p class="desc">建議優先勾選「維持原有效果」。勾其他項會自動取消它。</p>
+  <div class="options" id="femaleOpts">
+    <label class="opt"><input type="checkbox" name="female" value="/female_keep" checked><span>維持原有效果<span class="cmd">/female_keep</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_face"><span>臉型與下顎線<span class="cmd">/female_face</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_undereye"><span>眼周與精神感<span class="cmd">/female_undereye</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_skin"><span>膚質與瑕疵<span class="cmd">/female_skin</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_glow"><span>膚色透亮<span class="cmd">/female_glow</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_eyes"><span>眼神與眼周光影<span class="cmd">/female_eyes</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_nose"><span>鼻部光影<span class="cmd">/female_nose</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_lips"><span>唇部與妝感<span class="cmd">/female_lips</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_hair"><span>髮絲整理<span class="cmd">/female_hair</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_body"><span>身形線條<span class="cmd">/female_body</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_nasolabial"><span>淡化法令紋<span class="cmd">/female_nasolabial</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_frown"><span>淡化皺眉紋<span class="cmd">/female_frown</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_forehead"><span>淡化額頭細紋<span class="cmd">/female_forehead</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_eyelines"><span>淡化眼周細紋<span class="cmd">/female_eyelines</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_lines"><span>淡化臉部細紋<span class="cmd">/female_lines</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_makeup"><span>維持妝容微調<span class="cmd">/female_makeup</span></span></label>
+    <label class="opt"><input type="checkbox" name="female" value="/female_shadow"><span>淡化疲憊陰影<span class="cmd">/female_shadow</span></span></label>
+  </div>
+</section>
+
+<!-- 5 共同 -->
+<section class="panel">
+  <h2><span class="num">5</span>光線 · 色彩 · 背景 <span class="hint">可複選</span></h2>
+  <div class="options" id="sharedOpts">
+    <label class="opt"><input type="checkbox" name="shared" value="/exposure"><span>修正曝光明暗<span class="cmd">/exposure</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/brighten"><span>整體提亮<span class="cmd">/brighten</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/whitebalance"><span>白平衡膚色協調<span class="cmd">/whitebalance</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/clarity"><span>清晰度與細節<span class="cmd">/clarity</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/cinematic"><span>電影感色調<span class="cmd">/cinematic</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/film"><span>復古底片感<span class="cmd">/film</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/bokeh"><span>背景自然虛化<span class="cmd">/bokeh</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/removeobject"><span>清理背景雜物<span class="cmd">/removeobject</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/extend"><span>延伸畫面<span class="cmd">/extend</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/remove_specific"><span>移除指定物件<span class="cmd">/remove_specific</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/changebg"><span>更換背景<span class="cmd">/changebg</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/colorgrade"><span>色彩與對比<span class="cmd">/colorgrade</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/perspective"><span>透視與水平校正<span class="cmd">/perspective</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/unify"><span>整體色調統一<span class="cmd">/unify</span></span></label>
+  </div>
+</section>
+
+</div><!-- /personTab：原有人物修改區完整保留 -->
+
+<div id="sceneTab" class="tab-panel" role="tabpanel" aria-labelledby="sceneTabBtn" hidden>
+  <section class="panel">
+    <h2><span class="num">7</span>氛圍特效 <span class="hint">可複選</span></h2>
+    <div class="options" id="effectOpts">
+      <label class="opt"><input type="checkbox" name="effect" value="/sunray"><span>陽光灑落<span class="cmd">/sunray</span></span></label>
+      <label class="opt"><input type="checkbox" name="effect" value="/petals"><span>飄落花瓣<span class="cmd">/petals</span></span></label>
+      <label class="opt"><input type="checkbox" name="effect" value="/snow"><span>浪漫飄雪<span class="cmd">/snow</span></span></label>
+      <label class="opt"><input type="checkbox" name="effect" value="/mist"><span>自然薄霧<span class="cmd">/mist</span></span></label>
+      <label class="opt"><input type="checkbox" name="effect" value="/dreamlight"><span>夢幻光影<span class="cmd">/dreamlight</span></span></label>
+      <label class="opt"><input type="checkbox" name="effect" value="/rain"><span>細雨氛圍<span class="cmd">/rain</span></span></label>
+      <label class="opt"><input type="checkbox" name="effect" value="/sunset"><span>夕陽暖光<span class="cmd">/sunset</span></span></label>
+      <label class="opt"><input type="checkbox" name="effect" value="/sparkle"><span>夢幻光點<span class="cmd">/sparkle</span></span></label>
+    </div>
+  </section>
+  <section class="panel">
+    <h2><span class="num">8</span>場景選擇 <span class="hint">單選</span></h2>
+    <div class="field">
+      <label for="sceneChoice">選擇背景場景</label>
+      <select id="sceneChoice" class="scene-select">
+        <option value="">保留原背景</option>
+        <option value="/taipei101">台北101</option>
+        <option value="/jiufen">九份老街</option>
+        <option value="/tamsui">淡水</option>
+        <option value="/shanlinxi">南投杉林溪</option>
+        <option value="/alishan">阿里山</option>
+        <option value="/xpark">Xpark 水母牆櫃</option>
+        <option value="/sakura">日本櫻花街</option>
+        <option value="/paris">巴黎街景</option>
+        <option value="/beach">夕陽海灘</option>
+        <option value="/forest">森林步道</option>
+        <option value="/studio">專業攝影棚</option>
+        <option value="/cyberpunk">霓虹城市</option>
+        <option value="custom">自訂場景</option>
+      </select>
+    </div>
+    <div class="field" id="customSceneWrap" hidden>
+      <label for="customScene">你想去的地方／場景</label>
+      <input id="customScene" type="text" placeholder="例如：埃及金字塔、長城、冰島極光" />
+      <label for="sceneDetails" style="margin-top:10px">場景細節（選填）</label>
+      <textarea id="sceneDetails" rows="2" placeholder="例如：秋天、黃昏暖光、人物站在畫面左側，背景自然寫實"></textarea>
+      <p class="scene-note">只輸入地點也能產生指令；想更精準時，再補充季節、光線、氛圍或人物位置。</p>
+    </div>
+    <p class="scene-note" id="sceneNote">選擇場景後，會與人物修改短指令一起輸出。</p>
+  </section>
+</div>
+
+
+<!-- 6 保真 + 補充 -->
+<section class="panel">
+  <h2><span class="num">6</span>保真設定 + 補充要求</h2>
+  <div class="options">
+    <label class="opt"><input type="checkbox" id="keep_id" checked><span>保留身分五官<span class="cmd">/keep_identity</span></span></label>
+    <label class="opt"><input type="checkbox" id="keep_scene" checked><span>保留構圖場景<span class="cmd">/keep_scene</span></span></label>
+    <label class="opt"><input type="checkbox" id="keep_texture" checked><span>避免過度美顏<span class="cmd">/keep_texture</span></span></label>
+    <label class="opt"><input type="checkbox" id="keep_body" checked><span>避免肢體變形<span class="cmd">/keep_body</span></span></label>
+  </div>
+
+  <div id="geminiGuardWrap" class="field" hidden style="margin-top:12px">
+    <label class="opt"><input type="checkbox" id="geminiGuard"><span>加入 Gemini 人物原貌提醒（選填）</span></label>
+    <p class="scene-note">提醒：同時選擇多項修圖效果時，Gemini 可能出現人物失真或五官變化，建議分批修圖，以保留人物原貌。</p>
+  </div>
+  <p class="scene-note" id="sceneConflictNote" role="status" aria-live="polite">選擇新場景時，會自動取消「保留構圖場景」。</p>
+
+  <div class="subhead">補充要求（直接加進指令）</div>
+  <textarea id="custom" placeholder="例如：只修男生、女生不要動；腰自然一點；不要磨皮太重；背景衣服不變……"></textarea>
+
+  <div class="auto-row">
+    <input type="checkbox" id="autoUpdate" checked>
+    <label for="autoUpdate">選項變動時自動更新</label>
+  </div>
+
+  <div class="actions" style="margin-top:12px">
+    <button class="btn primary" id="generate">產生短指令</button>
+    <button class="btn secondary" id="reset">重設</button>
+  </div>
+
+  <div class="summary" id="summary"></div>
+  <label for="output" style="display:block;font-size:12px;color:var(--muted);margin-bottom:4px">完整短指令（複製後連同照片給 AI）</label>
+  <textarea id="output" class="output" placeholder="勾選後自動產生短指令" spellcheck="false"></textarea>
+  <div class="actions">
+    <button class="btn primary" id="copy">複製指令</button>
+    <button class="btn secondary" id="selectAll">全選</button>
+  </div>
+  <div id="status" class="status" role="status" aria-live="polite"></div>
+</section>
+
+<footer class="footer">
+  凡圖百鍊生 · v1.0 百鍊整合版<br>
+  上方選中文說明，下方輸出短指令。本工具不上傳照片。
+</footer>
+</main>
+
+<div class="sticky-bar">
+  <button class="btn secondary" id="stickyReset">重設</button>
+  <button class="btn primary" id="stickyGenerate">產生</button>
+  <button class="btn primary" id="stickyCopy">複製</button>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+function vals(name) {
+  return $$(`input[name="${name}"]:checked`).map(x => x.value);
+}
+
+function updateSummary() {
+  $('#summary').innerHTML = `
+    <span>身形 <b>${vals('body').length}</b></span>
+    <span>男性 <b>${vals('male').length}</b></span>
+    <span>女性 <b>${vals('female').length}</b></span>
+    <span>共同 <b>${vals('shared').length}</b></span>
+    <span>特效 <b>${vals('effect').length}</b></span>
+    <span>場景 <b>${$('#sceneChoice')?.value ? 1 : 0}</b></span>
+  `;
+}
+
+function syncSceneConflict(source = 'auto') {
+  const choice = $('#sceneChoice');
+  const keep = $('#keep_scene');
+  const note = $('#sceneConflictNote');
+  if (!choice || !keep) return;
+  if (source === 'keep' && keep.checked && choice.value) {
+    choice.value = '';
+    $('#sceneNote').textContent = '已選擇保留原背景，原先指定的場景已取消。';
+    note.textContent = '已恢復 /keep_scene，並取消原先選擇的新場景。';
+  } else if (choice.value) {
+    keep.checked = false;
+    const label = choice.options[choice.selectedIndex].text;
+    $('#sceneNote').textContent = `已選擇「${label}」，自動取消 /keep_scene；人物原貌保護維持開啟。`;
+    note.textContent = '已選擇更換場景，/keep_scene 已自動取消。若重新勾選，將取消目前的新場景。';
+  } else {
+    if (source === 'scene') keep.checked = true;
+    $('#sceneNote').textContent = '保留原背景；選擇其他場景將自動取消 /keep_scene。';
+    note.textContent = '目前沒有指定新場景。選擇新場景時，會自動取消「保留構圖場景」。';
+  }
+}
+
+function buildPrompt() {
+  syncSceneConflict();
+  const platform = $('#platform').value;
+  const photoType = $('#photoType').value;
+  const style = $('#style').value;
+  const intensity = $('#intensity').value;
+  const body = vals('body');
+  const male = vals('male');
+  const female = vals('female');
+  const shared = vals('shared');
+  const effect = vals('effect');
+  const scene = $('#sceneChoice')?.value || '';
+  const customScene = ($('#customScene')?.value || '').trim();
+  const sceneDetails = ($('#sceneDetails')?.value || '').trim();
+  const custom = $('#custom').value.trim();
+
+  const lines = [];
+
+  // 開頭
+  lines.push('/portraitretouch');
+  lines.push(`/platform ${platform}`);
+  lines.push(`/type ${photoType}`);
+  lines.push(`/style ${style}`);
+  lines.push(`/intensity ${intensity}`);
+
+  // 人物分開（僅合照類）
+  if (['couple', 'group'].includes(photoType)) {
+    lines.push('/separate_people');
+  }
+
+  // 各區塊
+  if (body.length) lines.push(body.join(' '));
+  if (male.length) lines.push(male.join(' '));
+  if (female.length) lines.push(female.join(' '));
+  if (shared.length) lines.push(shared.join(' '));
+  if (effect.length) lines.push(effect.join(' '));
+  if (scene && scene !== 'custom') lines.push(scene);
+  if (scene === 'custom' && customScene) {
+    lines.push(`/custom_scene ${customScene}`);
+    lines.push(`/scene_style photorealistic, coherent environment, natural lighting, preserve original people, poses, and composition`);
+    if (sceneDetails) lines.push(`/scene_details ${sceneDetails}`);
+  }
+
+  // 保真
+  const keep = [];
+  if ($('#keep_id').checked) keep.push('/keep_identity');
+  if ($('#keep_scene').checked && !scene) keep.push('/keep_scene');
+  if ($('#keep_texture').checked) keep.push('/keep_texture');
+  if ($('#keep_body').checked) keep.push('/keep_body');
+  if (keep.length) lines.push(keep.join(' '));
+
+  // 補充
+  if (custom) lines.push(`/note ${custom}`);
+
+  // Gemini 人物原貌提醒為選用，不改變其他平台的輸出
+  if (platform === 'gemini' && $('#geminiGuard')?.checked) {
+    lines.push('Preserve the original person\'s identity, facial features, face shape, and expression. Edit only the selected areas. For scene replacement, change the background while keeping the original person and pose. Do not regenerate the face. Apply selected edits conservatively; if edits conflict, prioritize identity preservation and natural results.');
+  }
+
+  // 結尾提醒
+  lines.push('/apply_on_photo');
+
+  $('#output').value = lines.join('\n');
+  updateSummary();
+  $('#status').textContent = '短指令已產生';
+}
+
+function clearChecks() {
+  $$('input[type="checkbox"]').forEach(x => {
+    if (x.id !== 'autoUpdate') x.checked = false;
+  });
+}
+
+function applyPreset(name) {
+  clearChecks();
+  ['keep_id','keep_scene','keep_texture','keep_body'].forEach(id => $('#'+id).checked = true);
+
+  const set = {
+    couple() {
+      $('#photoType').value = 'couple';
+      $('#style').value = 'natural';
+      $('#intensity').value = 'medium';
+      $$('input[name="male"]').slice(0,3).forEach(x => x.checked = true);
+      $$('input[name="female"]')[0].checked = true;
+      [0,2,3].forEach(i => $$('input[name="shared"]')[i].checked = true);
+    },
+    family() {
+      // 合照／家庭：多人分開處理，輕度自然，男女都照顧但不過度
+      $('#photoType').value = 'group';
+      $('#style').value = 'natural';
+      $('#intensity').value = 'medium';
+      $$('input[name="male"]').slice(0,3).forEach(x => x.checked = true); // 輪廓、肉感、眼袋
+      $$('input[name="male"]')[7].checked = true; // 膚質
+      $$('input[name="male"]')[9].checked = true; // 精神
+      $$('input[name="female"]')[0].checked = true; // 維持原有效果
+      $$('input[name="body"]')[0].checked = true; // 全身自然顯瘦
+      $$('input[name="body"]')[8].checked = true; // 改善體態姿勢
+      [0,2,3,13].forEach(i => $$('input[name="shared"]')[i].checked = true); // 曝光、白平衡、清晰度、色調統一
+    },
+    male() {
+      $('#photoType').value = 'male';
+      $('#style').value = 'natural';
+      $('#intensity').value = 'medium';
+      $$('input[name="male"]').slice(0,6).forEach(x => x.checked = true);
+      $$('input[name="male"]')[7].checked = true;
+      $$('input[name="male"]')[9].checked = true;
+      [0,2,3].forEach(i => $$('input[name="shared"]')[i].checked = true);
+    },
+    female() {
+      $('#photoType').value = 'female';
+      $('#style').value = 'natural';
+      $('#intensity').value = 'light';
+      $$('input[name="female"]')[0].checked = true;
+      [0,2,3].forEach(i => $$('input[name="shared"]')[i].checked = true);
+    },
+    travel() {
+      $('#photoType').value = 'travel';
+      $('#style').value = 'warm';
+      $('#intensity').value = 'medium';
+      $$('input[name="male"]').slice(0,3).forEach(x => x.checked = true);
+      $$('input[name="female"]')[0].checked = true;
+      $$('input[name="body"]')[0].checked = true;
+      [0,2,3,6].forEach(i => $$('input[name="shared"]')[i].checked = true);
+    },
+    wedding() {
+      $('#photoType').value = 'wedding';
+      $('#style').value = 'wedding';
+      $('#intensity').value = 'medium';
+      $$('input[name="male"]').slice(0,4).forEach(x => x.checked = true);
+      $$('input[name="female"]')[0].checked = true;
+      $$('input[name="body"]')[0].checked = true;
+      $$('input[name="body"]')[1].checked = true;
+      [0,2,3,6].forEach(i => $$('input[name="shared"]')[i].checked = true);
+    },
+    clear() {
+      $('#photoType').value = 'couple';
+      $('#style').value = 'natural';
+      $('#intensity').value = 'light';
+      $('#custom').value = '';
+  if ($('#customScene')) $('#customScene').value = '';
+  if ($('#sceneDetails')) $('#sceneDetails').value = '';
+  if ($('#geminiGuard')) $('#geminiGuard').checked = false;
+    }
+  };
+
+  if (set[name]) set[name]();
+  $$('.pill').forEach(p => p.classList.remove('active'));
+  const btn = $(`.pill[data-preset="${name}"]`);
+  if (btn && name !== 'clear') btn.classList.add('active');
+  buildPrompt();
+  $('#status').textContent = name === 'clear' ? '已清空' : '已套用預設';
+}
+
+
+// 分頁切換：只切換顯示，不清除任何選項
+function showTab(which) {
+  const person = which === 'person';
+  $('#personTab').hidden = !person;
+  $('#sceneTab').hidden = person;
+  $('#personTabBtn').classList.toggle('active', person);
+  $('#sceneTabBtn').classList.toggle('active', !person);
+  $('#personTabBtn').setAttribute('aria-selected', String(person));
+  $('#sceneTabBtn').setAttribute('aria-selected', String(!person));
+}
+$('#personTabBtn').addEventListener('click', () => showTab('person'));
+$('#sceneTabBtn').addEventListener('click', () => showTab('scene'));
+
+const sceneDescriptions = {
+  '/taipei101':'台北101與信義區城市景觀',
+  '/jiufen':'九份山城、石階、紅燈籠與懷舊茶樓',
+  '/tamsui':'淡水河岸與漁人碼頭景觀',
+  '/shanlinxi':'南投杉林溪高聳杉木、森林步道與山林景觀',
+  '/alishan':'阿里山森林、神木與森林鐵道景觀',
+  '/xpark':'人物自然站在單一大型水母玻璃展示牆前；人物與背景皆清晰，櫃內只有少量、輪廓清楚的水母，柔和藍紫色燈光；不增加其他展示缸或過多水母，不過度虛化背景',
+  '/sakura':'日本春季櫻花街景',
+  '/paris':'巴黎街景與城市建築',
+  '/beach':'自然海岸線與夕陽海灘',
+  '/forest':'有層次的森林步道',
+  '/studio':'簡潔專業攝影棚背景',
+  '/cyberpunk':'未來感霓虹城市街景'
+};
+$('#sceneChoice').addEventListener('change', () => {
+  const v = $('#sceneChoice').value;
+  $('#customSceneWrap').hidden = v !== 'custom';
+  $('#sceneNote').textContent = v ? (sceneDescriptions[v] || (v === 'custom' ? '輸入自訂地點，可選擇補充場景細節。' : v)) : '選擇場景後，會與人物修改短指令一起輸出。';
+});
+
+function syncPlatformOptions() {
+  $('#geminiGuardWrap').hidden = $('#platform').value !== 'gemini';
+}
+$('#platform').addEventListener('change', () => { syncPlatformOptions(); buildPrompt(); });
+
+// 事件
+$('#generate').addEventListener('click', buildPrompt);
+$('#stickyGenerate').addEventListener('click', () => {
+  buildPrompt();
+  $('#output').scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+
+async function doCopy() {
+  if (!$('#output').value) buildPrompt();
+  try {
+    await navigator.clipboard.writeText($('#output').value);
+    $('#status').textContent = '已複製，請到 AI 貼上並附照片';
+  } catch {
+    $('#output').focus();
+    $('#output').select();
+    try {
+      document.execCommand('copy');
+      $('#status').textContent = '已嘗試複製；手機可長按文字複製';
+    } catch {
+      $('#status').textContent = '請長按指令文字複製';
+    }
+  }
+}
+$('#copy').addEventListener('click', doCopy);
+$('#stickyCopy').addEventListener('click', doCopy);
+
+$('#selectAll').addEventListener('click', () => {
+  $('#output').focus();
+  $('#output').select();
+  $('#status').textContent = '已全選';
+});
+
+function doReset() {
+  clearChecks();
+  if ($('#sceneChoice')) $('#sceneChoice').value = '';
+  ['keep_id','keep_scene','keep_texture','keep_body'].forEach(id => $('#'+id).checked = true);
+  $$('input[name="male"]').slice(0,3).forEach(x => x.checked = true);
+  $$('input[name="female"]')[0].checked = true;
+  $('#platform').value = 'general';
+  $('#photoType').value = 'couple';
+  $('#style').value = 'natural';
+  $('#intensity').value = 'medium';
+  $('#custom').value = '';
+  if ($('#customScene')) $('#customScene').value = '';
+  if ($('#sceneDetails')) $('#sceneDetails').value = '';
+  if ($('#geminiGuard')) $('#geminiGuard').checked = false;
+  $$('.pill').forEach(p => p.classList.remove('active'));
+  buildPrompt();
+  $('#status').textContent = '已重設為預設';
+}
+$('#reset').addEventListener('click', doReset);
+$('#stickyReset').addEventListener('click', doReset);
+
+$$('.pill').forEach(btn => btn.addEventListener('click', () => applyPreset(btn.dataset.preset)));
+
+function onChange() {
+  if ($('#autoUpdate').checked) buildPrompt();
+  else updateSummary();
+}
+$$('input[type="checkbox"], select, #custom, #customScene, #sceneDetails').forEach(el => {
+  el.addEventListener('change', onChange);
+  if (el.tagName === 'TEXTAREA' || el.id === 'customScene') el.addEventListener('input', onChange);
+});
+
+// 場景與保留原背景互斥，切換時同步更新短指令。
+$('#sceneChoice').addEventListener('change', () => {
+  syncSceneConflict('scene');
+  buildPrompt();
+});
+$('#keep_scene').addEventListener('change', () => {
+  syncSceneConflict('keep');
+  buildPrompt();
+});
+
+// 女性互斥：勾其他 → 取消 keep
+$$('input[name="female"]').forEach((cb, i) => {
+  cb.addEventListener('change', () => {
+    if (i > 0 && cb.checked) $$('input[name="female"]')[0].checked = false;
+  });
+});
+
+syncPlatformOptions();
+buildPrompt();
+</script>
+
+<script>
+/* Isolated motion layer: does not change prompt-generation logic. */
+(() => {
+ const panels=document.querySelectorAll('.panel');
+ panels.forEach((el,i)=>el.style.setProperty('--motion-delay',Math.min(i,5)*65+'ms'));
+ document.querySelectorAll('.btn').forEach(btn=>btn.addEventListener('pointerdown',e=>{
+  const r=btn.getBoundingClientRect(),dot=document.createElement('span');
+  dot.className='motion-ripple';dot.style.setProperty('--rx',(e.clientX-r.left)+'px');dot.style.setProperty('--ry',(e.clientY-r.top)+'px');
+  btn.appendChild(dot);dot.addEventListener('animationend',()=>dot.remove(),{once:true});
+ }));
+ const out=document.querySelector('#output');
+ if(out){
+  const observer=new MutationObserver(()=>{out.classList.remove('motion-updated');void out.offsetWidth;out.classList.add('motion-updated')});
+  observer.observe(out,{attributes:true,attributeFilter:['value']});
+  document.querySelectorAll('#generate,#stickyGenerate').forEach(b=>b.addEventListener('click',()=>{
+   out.classList.remove('motion-updated');void out.offsetWidth;out.classList.add('motion-updated');
+  }));
+ }
+})();
+</script>
+<script>
+/* 金印互動：金塵、滑鼠光暈與傾斜、點擊金光 */
+(()=>{const h=document.getElementById('hero'),w=document.getElementById('sealWrap'),s=document.getElementById('seal');
+if(!h||!w||!s)return;
+if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+const d=document.createElement('div');d.className='dust';d.setAttribute('aria-hidden','true');
+for(let i=0;i<14;i++){const e=document.createElement('i');e.style.cssText=`--x:${Math.random()*96+2}%;--s:${2+Math.random()*3}px;--d:${7+Math.random()*7}s;--t:${-Math.random()*12}s`;d.appendChild(e)}
+h.prepend(d);
+h.addEventListener('pointermove',e=>{const r=h.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;h.style.setProperty('--mx',x*100+'%');h.style.setProperty('--my',y*100+'%');w.style.setProperty('--ry',(x-.5)*26+'deg');w.style.setProperty('--rx',(.3-y)*22+'deg')});
+h.addEventListener('pointerleave',()=>{w.style.setProperty('--rx','0deg');w.style.setProperty('--ry','0deg')});
+s.addEventListener('click',()=>{w.classList.remove('burst');void w.offsetWidth;w.classList.add('burst')});
+})();
+</script>
+</body>
+</html>
