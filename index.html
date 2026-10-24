@@ -128,6 +128,23 @@ textarea{resize:vertical}
 .footer{padding:14px 8px 6px;text-align:center;color:var(--muted);font-size:11px;line-height:1.5}
 .footer::before{content:"◆";display:block;margin-bottom:6px;color:var(--gold2);font-size:9px}
 
+.tabs{grid-template-columns:repeat(3,1fr)}
+.tabs::before{width:calc((100% - 8px)/3)}
+.tabs:has(#textTabBtn.active)::before{transform:translateX(200%)}
+.tab-btn{font-size:13.5px;padding:11px 4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 4px}
+.chip{padding:5px 12px;border-radius:999px;border:1px solid #d9cdb6;background:#fbf6ea;color:#5d4c30;font:inherit;font-size:12.5px;cursor:pointer;transition:.2s;-webkit-tap-highlight-color:transparent}
+.chip:active{transform:scale(.95)}
+.chip.on{background:linear-gradient(135deg,#f6e3a6,#d6b062);border-color:#a77a2d;color:#2a1f0c;font-weight:650}
+.cap-line{margin-top:6px;padding:16px 14px;min-height:76px;border:1px dashed var(--gold3);border-radius:14px;background:linear-gradient(145deg,#fffaf0,#f8efd9);font:400 18px/1.7 var(--kai);text-align:center;white-space:pre-line}
+.cap-line small{display:block;margin-top:6px;font:400 12px/1.5 system-ui,sans-serif;color:var(--muted)}
+.pgroup{margin:12px 0 6px;font-size:12px;color:var(--muted);letter-spacing:.08em}
+.presets.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.presets.grid .pill{display:flex;align-items:center;justify-content:center;min-height:40px;padding:6px 4px;text-align:center;font-size:12.5px;line-height:1.3}
+.presets.grid .hint{grid-column:1/-1}
+.pill[data-preset=clear]{background:transparent;border-style:dashed;box-shadow:none;color:var(--muted)}
+  .pill .x{margin-left:8px;padding:0 2px;opacity:.55;font-weight:700}
+.pill.mine{display:inline-flex;align-items:center}
 @media(max-width:560px){.fields{grid-template-columns:1fr}.options{gap:6px}.panel{padding:14px 11px 12px}.opt{font-size:12.5px}.opt .cmd{font-size:10px}}
 @media(min-width:640px){body{padding-bottom:20px}.sticky-bar{display:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.dust{display:none}}
@@ -149,15 +166,29 @@ textarea{resize:vertical}
 <!-- 快速預設 -->
 <section class="panel">
   <h2><span class="num">0</span>快速預設</h2>
-  <div class="presets" id="presets">
+  <div class="pgroup">人物</div>
+  <div class="presets grid">
     <button type="button" class="pill" data-preset="couple">夫妻自然</button>
     <button type="button" class="pill" data-preset="family">合照／家庭</button>
     <button type="button" class="pill" data-preset="male">單人男性</button>
     <button type="button" class="pill" data-preset="female">單人女性</button>
+    <button type="button" class="pill" data-preset="love">情侶紀念</button>
+  </div>
+  <div class="pgroup">場景氛圍</div>
+  <div class="presets grid">
     <button type="button" class="pill" data-preset="travel">旅遊</button>
     <button type="button" class="pill" data-preset="wedding">婚紗</button>
+    <button type="button" class="pill" data-preset="golden">金色夕陽底片</button>
+    <button type="button" class="pill" data-preset="night">夜景燈火</button>
+  </div>
+  <div class="pgroup">工具</div>
+  <div class="presets grid">
+    <button type="button" class="pill" data-preset="restore">清晰補救</button>
     <button type="button" class="pill" data-preset="clear">清空</button>
   </div>
+  <div class="subhead">我的預設</div>
+  <div class="presets grid" id="myPresets"></div>
+  <div class="actions"><button type="button" class="btn secondary" id="saveMine">＋ 把目前設定存成我的預設</button></div>
 </section>
 
 <!-- 1 基礎 -->
@@ -213,6 +244,7 @@ textarea{resize:vertical}
 <nav class="tabs" role="tablist" aria-label="編輯功能分頁">
   <button type="button" class="tab-btn active" id="personTabBtn" role="tab" aria-selected="true" aria-controls="personTab">人物修改</button>
   <button type="button" class="tab-btn" id="sceneTabBtn" role="tab" aria-selected="false" aria-controls="sceneTab">特效／場景</button>
+  <button type="button" class="tab-btn" id="textTabBtn" role="tab" aria-selected="false" aria-controls="textTab">文字點睛</button>
 </nav>
 <div id="personTab" class="tab-panel" role="tabpanel" aria-labelledby="personTabBtn">
 <!-- 2 身形 -->
@@ -302,7 +334,13 @@ textarea{resize:vertical}
     <label class="opt"><input type="checkbox" name="shared" value="/colorgrade"><span>色彩與對比<span class="cmd">/colorgrade</span></span></label>
     <label class="opt"><input type="checkbox" name="shared" value="/perspective"><span>透視與水平校正<span class="cmd">/perspective</span></span></label>
     <label class="opt"><input type="checkbox" name="shared" value="/unify"><span>整體色調統一<span class="cmd">/unify</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/deblur"><span>修復模糊與對焦<span class="cmd">/deblur</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/denoise"><span>降噪去顆粒<span class="cmd">/denoise</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/sharpen"><span>加強輪廓邊緣<span class="cmd">/sharpen</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/upscale"><span>提升解析度與細節<span class="cmd">/upscale</span></span></label>
+    <label class="opt"><input type="checkbox" name="shared" value="/facedetail"><span>臉部細節更清晰<span class="cmd">/facedetail</span></span></label>
   </div>
+  <p class="scene-note">畫質強化是請 AI 重建細節，不是無損放大。原圖太糊時，建議先選「修復模糊」「降噪」再加輪廓，並保持「保留身分五官」開啟，避免臉被重畫。</p>
 </section>
 
 </div><!-- /personTab：原有人物修改區完整保留 -->
@@ -319,6 +357,10 @@ textarea{resize:vertical}
       <label class="opt"><input type="checkbox" name="effect" value="/rain"><span>細雨氛圍<span class="cmd">/rain</span></span></label>
       <label class="opt"><input type="checkbox" name="effect" value="/sunset"><span>夕陽暖光<span class="cmd">/sunset</span></span></label>
       <label class="opt"><input type="checkbox" name="effect" value="/sparkle"><span>夢幻光點<span class="cmd">/sparkle</span></span></label>
+      <label class="opt"><input type="checkbox" name="effect" value="/goldenhour"><span>金色夕陽<span class="cmd">/goldenhour</span></span></label>
+      <label class="opt"><input type="checkbox" name="effect" value="/wetsand"><span>濕沙倒影<span class="cmd">/wetsand</span></span></label>
+      <label class="opt"><input type="checkbox" name="effect" value="/lightleak"><span>底片漏光<span class="cmd">/lightleak</span></span></label>
+      <label class="opt"><input type="checkbox" name="effect" value="/filmgrain"><span>底片顆粒灰塵<span class="cmd">/filmgrain</span></span></label>
     </div>
   </section>
   <section class="panel">
@@ -354,6 +396,35 @@ textarea{resize:vertical}
 </div>
 
 
+<div id="textTab" class="tab-panel" role="tabpanel" aria-labelledby="textTabBtn" hidden>
+  <section class="panel">
+    <h2><span class="num">9</span>文字點睛 <span class="hint">選填 · 預設不加字</span></h2>
+    <label class="opt"><input type="checkbox" id="capOn"><span>在照片上加一句文字<span class="cmd">/caption</span></span></label>
+    <div id="capBody" hidden>
+      <div class="field" style="margin-top:12px">
+        <label for="capKeys">這張照片的感覺（地點＋心情）</label>
+        <input id="capKeys" type="text" placeholder="例如：湖邊、傷感" autocomplete="off">
+      </div>
+      <div class="subhead">地點</div><div class="chips" id="capChipsP"></div>
+      <div class="subhead">心情</div><div class="chips" id="capChipsM"></div>
+      <div class="actions"><button type="button" class="btn primary" id="capGen">想一句</button></div>
+      <div class="cap-line" id="capShow">點「想一句」，這裡會出現文字</div>
+      <div class="field" style="margin-top:12px">
+        <label for="capText">要放上照片的文字（可直接修改，或自己輸入）</label>
+        <textarea id="capText" rows="2" placeholder="也可以不點「想一句」，直接寫自己的話"></textarea>
+      </div>
+      <div class="fields" style="margin-top:12px">
+        <div class="field"><label for="capLang">文字語言</label><select id="capLang"><option value="zh">中文</option><option value="en">English</option><option value="both">中英雙行</option></select></div>
+        <div class="field"><label for="capStyle">文字風格</label><select id="capStyle"><option value="handwritten">溫柔手寫</option><option value="minimal">簡約現代</option><option value="retro">復古底片</option><option value="calligraphy">優雅書法</option><option value="cinematic">電影字幕</option></select></div>
+        <div class="field"><label for="capPos">位置</label><select id="capPos"><option value="safe">AI 建議（避開人物）</option><option value="bottom">下方留白</option><option value="top">上方</option><option value="left">左側</option><option value="right">右側</option></select></div>
+        <div class="field"><label for="capLayout">排版</label><select id="capLayout"><option value="horizontal">橫排</option><option value="vertical">直排</option></select></div>
+        <div class="field"><label for="capColor">文字顏色</label><select id="capColor"><option value="auto">依畫面自動</option><option value="white">白色</option><option value="gold">暖金</option><option value="dark">深色</option></select></div>
+      </div>
+      <p class="scene-note">AI 生圖畫中文字有時會寫錯字，指令已加上「逐字照寫」；若仍有錯，建議把文字改短，或先修圖再單獨加字。</p>
+    </div>
+  </section>
+</div>
+
 <!-- 6 保真 + 補充 -->
 <section class="panel">
   <h2><span class="num">6</span>保真設定 + 補充要求</h2>
@@ -362,6 +433,8 @@ textarea{resize:vertical}
     <label class="opt"><input type="checkbox" id="keep_scene" checked><span>保留構圖場景<span class="cmd">/keep_scene</span></span></label>
     <label class="opt"><input type="checkbox" id="keep_texture" checked><span>避免過度美顏<span class="cmd">/keep_texture</span></span></label>
     <label class="opt"><input type="checkbox" id="keep_body" checked><span>避免肢體變形<span class="cmd">/keep_body</span></span></label>
+    <label class="opt"><input type="checkbox" id="keep_hair"><span>保留髮型<span class="cmd">/keep_hair</span></span></label>
+    <label class="opt"><input type="checkbox" id="keep_makeup"><span>保留原本妝容<span class="cmd">/keep_makeup</span></span></label>
   </div>
 
   <div id="geminiGuardWrap" class="field" hidden style="margin-top:12px">
@@ -421,6 +494,7 @@ function updateSummary() {
     <span>共同 <b>${vals('shared').length}</b></span>
     <span>特效 <b>${vals('effect').length}</b></span>
     <span>場景 <b>${$('#sceneChoice')?.value ? 1 : 0}</b></span>
+    <span>文字 <b>${$('#capOn')?.checked && $('#capText')?.value.trim() ? 1 : 0}</b></span>
   `;
 }
 
@@ -488,12 +562,17 @@ function buildPrompt() {
     if (sceneDetails) lines.push(`/scene_details ${sceneDetails}`);
   }
 
+  // 文字點睛（第三分頁，預設關閉）
+  lines.push(...capLines());
+
   // 保真
   const keep = [];
   if ($('#keep_id').checked) keep.push('/keep_identity');
   if ($('#keep_scene').checked && !scene) keep.push('/keep_scene');
   if ($('#keep_texture').checked) keep.push('/keep_texture');
   if ($('#keep_body').checked) keep.push('/keep_body');
+  if ($('#keep_hair').checked) keep.push('/keep_hair');
+  if ($('#keep_makeup').checked) keep.push('/keep_makeup');
   if (keep.length) lines.push(keep.join(' '));
 
   // 補充
@@ -514,12 +593,13 @@ function buildPrompt() {
 
 function clearChecks() {
   $$('input[type="checkbox"]').forEach(x => {
-    if (x.id !== 'autoUpdate') x.checked = false;
+    if (x.id !== 'autoUpdate' && x.id !== 'capOn') x.checked = false;
   });
 }
 
 function applyPreset(name) {
   clearChecks();
+  capReset();
   ['keep_id','keep_scene','keep_texture','keep_body'].forEach(id => $('#'+id).checked = true);
 
   const set = {
@@ -579,6 +659,48 @@ function applyPreset(name) {
       $$('input[name="body"]')[1].checked = true;
       [0,2,3,6].forEach(i => $$('input[name="shared"]')[i].checked = true);
     },
+    love() {
+      // 情侶紀念：柔和自然，附一句浪漫文字
+      $('#photoType').value = 'couple';
+      $('#style').value = 'soft';
+      $('#intensity').value = 'light';
+      $$('input[name="male"]').slice(0,3).forEach(x => x.checked = true);
+      $$('input[name="female"]')[0].checked = true;
+      ['/exposure','/whitebalance','/clarity'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
+      ['/dreamlight','/sparkle'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
+      $('#capLang').value = 'both'; $('#capStyle').value = 'handwritten';
+      $('#capOn').checked = true; $('#capBody').hidden = false; $('#capKeys').value = '浪漫'; capSyncChips(); capNext();
+    },
+    restore() {
+      // 清晰補救：給模糊、低畫質的舊照片，不改變人物類型
+      $('#style').value = 'natural';
+      $('#intensity').value = 'light';
+      ['/deblur','/denoise','/sharpen','/upscale','/facedetail','/clarity'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
+    },
+    night() {
+      // 夜景燈火：電影感、降噪、光點氛圍，附一句夜景文字
+      $('#photoType').value = 'travel';
+      $('#style').value = 'cinematic';
+      $('#intensity').value = 'medium';
+      $$('input[name="female"]')[0].checked = true;
+      ['/exposure','/cinematic','/bokeh','/colorgrade','/denoise'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
+      ['/dreamlight','/sparkle'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
+      $('#capLang').value = 'en'; $('#capStyle').value = 'cinematic';
+      $('#capOn').checked = true; $('#capBody').hidden = false; $('#capKeys').value = '夜景、平靜'; capSyncChips(); capNext();
+    },
+    golden() {
+      // 金色夕陽底片：人物保守、氛圍加強，並保留髮型與妝容
+      $('#photoType').value = 'female';
+      $('#style').value = 'warm';
+      $('#intensity').value = 'light';
+      $$('input[name="female"]')[0].checked = true;
+      [0,2,3].forEach(i => $$('input[name="shared"]')[i].checked = true);
+      ['/cinematic','/facedetail','/sunset','/sunray','/goldenhour','/wetsand','/lightleak','/filmgrain'].forEach(v => {
+        const x = document.querySelector(`input[value="${v}"]`);
+        if (x) x.checked = true;
+      });
+      ['keep_hair','keep_makeup'].forEach(id => $('#'+id).checked = true);
+    },
     clear() {
       $('#photoType').value = 'couple';
       $('#style').value = 'natural';
@@ -601,16 +723,14 @@ function applyPreset(name) {
 
 // 分頁切換：只切換顯示，不清除任何選項
 function showTab(which) {
-  const person = which === 'person';
-  $('#personTab').hidden = !person;
-  $('#sceneTab').hidden = person;
-  $('#personTabBtn').classList.toggle('active', person);
-  $('#sceneTabBtn').classList.toggle('active', !person);
-  $('#personTabBtn').setAttribute('aria-selected', String(person));
-  $('#sceneTabBtn').setAttribute('aria-selected', String(!person));
+  ['person','scene','text'].forEach(k => {
+    const on = k === which;
+    $('#'+k+'Tab').hidden = !on;
+    $('#'+k+'TabBtn').classList.toggle('active', on);
+    $('#'+k+'TabBtn').setAttribute('aria-selected', String(on));
+  });
 }
-$('#personTabBtn').addEventListener('click', () => showTab('person'));
-$('#sceneTabBtn').addEventListener('click', () => showTab('scene'));
+['person','scene','text'].forEach(k => $('#'+k+'TabBtn').addEventListener('click', () => showTab(k)));
 
 const sceneDescriptions = {
   '/taipei101':'台北101與信義區城市景觀',
@@ -717,6 +837,118 @@ $$('input[name="female"]').forEach((cb, i) => {
     if (i > 0 && cb.checked) $$('input[name="female"]')[0].checked = false;
   });
 });
+
+/* ===== 文字點睛（第三分頁）===== */
+const CAP_SCENES=[['湖','湖光裡','by the lake'],['海','潮聲裡','by the sea'],['山','山風中','in the mountain wind'],['夜,城市,燈','燈火裡','in the city lights'],['花,櫻','花影間','among the blossoms'],['街','街角的光裡','in the glow of the street'],['咖啡','咖啡香裡','in the scent of coffee'],['夕陽,日落,黃昏','暮色裡','in the dusk'],['雪','雪色中','in the snow'],['森林,林','林蔭裡','under the trees'],['旅,路','旅途中','on the road'],['家','屋簷下','under this roof'],['雨','雨聲裡','in the sound of rain'],['風','風過處','where the wind passes']];
+const CAP_MOODS={
+傷感:['傷,難過,孤,想念,思念,失落,悲,哭,寂寞',[['有些想念，只適合留在{s}。','Some longing stays {e}.'],['把沒說完的話，輕輕放在{s}。','Unspoken words rest softly {e}.'],['風過了，名字還在{s}。','The wind has passed; your name remains {e}.'],['走遠了，心還留在{s}。','I walked on, but my heart stayed {e}.'],['月光很輕，想念很重。','Moonlight is light; longing is heavy.'],['你不在，{s}也安靜了。','You are gone, and the quiet deepens {e}.']]],
+平靜:['靜,平靜,療癒,放鬆,慢',[['在{s}，心慢慢安靜下來。','{e}, the heart slowly settles.'],['不急，{s}的時間很慢。','No rush; time moves slowly {e}.'],['把一切放下，只剩呼吸。','Let everything go; only breath remains.'],['靜靜站著，也是一種前進。','To stand still is also a way forward.'],['在{s}，剛好，不多也不少。','Just enough {e}, nothing more, nothing less.'],['風停了，心也落了地。','The wind stops; the heart touches ground.']]],
+浪漫:['浪漫,愛,甜,戀,喜歡,情侶,夫妻,婚',[['在{s}遇見你，風都變軟了。','Meeting you {e}, even the wind softens.'],['光落在你肩上，我落在你眼裡。','Light falls on your shoulder; I fall into your eyes.'],['把喜歡藏進{s}，只說給你聽。','I hide my love {e}, to tell only you.'],['這一刻，{s}只屬於我們。','This moment, {e} belongs only to us.'],['世界很大，你剛好在這。','The world is vast; you are just here.'],['有你在，哪裡都像春天。','With you, anywhere feels like spring.']]],
+開心:['開心,快樂,幸福,笑,歡',[['今天的光，剛好落在笑裡。','Today’s light lands just inside the smile.'],['把好心情，掛在{s}。','I hang my good mood {e}.'],['風都在笑，我也是。','Even the wind is laughing, and so am I.'],['在{s}，快樂剛剛好。','Joy is just right {e}.'],['心很輕，像要飛起來。','My heart is light, as if it could fly.'],['這一天，值得被好好記住。','This day deserves to be remembered.']]],
+懷舊:['懷舊,回憶,紀念,從前,復古,時光,那年',[['時光走遠了，{s}還亮著。','Time has walked far; the light still glows {e}.'],['把這一刻，存進{s}。','I store this moment {e}.'],['多年後再看，仍會微笑。','Years from now, I will still smile.'],['舊時光裡，有你也有我。','In old days, there was you and me.'],['那年的風，還記得我們。','The wind of that year still remembers us.'],['翻開記憶，{s}依然溫暖。','Opening memories, it is still warm {e}.']]],
+溫柔:['溫柔,暖,柔,輕,軟',[['在{s}，被溫柔輕輕接住。','{e}, gently held by tenderness.'],['慢慢來，{s}不趕。','Take your time; nothing rushes {e}.'],['願你，像光一樣安靜又溫暖。','May you be quiet and warm, like light.'],['世界很吵，你要溫柔。','The world is loud; stay gentle.'],['輕輕的，也是一種力量。','Gentleness is a kind of strength.'],['把今天，收進柔軟的時光。','I tuck today into soft time.']]],
+勇氣:['勇,自由,出發,冒險,夢,往前',[['站在{s}，世界忽然變大了。','Standing {e}, the world grows wider.'],['在{s}出發，一切都來得及。','Setting out {e}, it is never too late.'],['這裡不是終點，是開始。','This is not the end; it is the beginning.'],['往前一步，風景就不同。','One step ahead, and the view changes.'],['風很大，心很亮。','The wind is strong; the heart is bright.'],['告訴自己：我可以。','Tell yourself: I can.']]]
+};
+let capPool=[],capIdx=0,capCur=null,capSig='',capEdited=false;
+const capHas=(al,k)=>al.split(',').some(a=>k.includes(a));
+function capBuild(keys){
+  let sc=CAP_SCENES.filter(s=>capHas(s[0],keys)).map(s=>[s[1],s[2]]);
+  if(!sc.length)sc=[['此刻','in this moment']];
+  const md=Object.values(CAP_MOODS).filter(m=>capHas(m[0],keys));
+  const use=md.length?md:[CAP_MOODS['溫柔'],CAP_MOODS['平靜']];
+  const seen=new Set(),out=[];
+  use.forEach(m=>m[1].forEach(t=>sc.forEach(s=>{
+    const zh=t[0].replace(/\{s\}/g,s[0]);
+    if(seen.has(zh))return;seen.add(zh);
+    const en=t[1].replace(/\{e\}/g,s[1]);
+    out.push([zh,en.charAt(0).toUpperCase()+en.slice(1)]);
+  })));
+  for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]];}
+  return out;
+}
+function capTextFor(c){const l=$('#capLang').value;return l==='zh'?c[0]:l==='en'?c[1]:c[0]+'\n'+c[1];}
+function capRender(){
+  const box=$('#capShow');box.textContent=capCur[0];
+  const sm=document.createElement('small');sm.textContent=capCur[1]+'　·　不喜歡就再點一次';box.appendChild(sm);
+  $('#capText').value=capTextFor(capCur);
+  $('#capGen').textContent='換一句';
+}
+function capNext(){
+  const keys=$('#capKeys').value.trim();
+  if(keys!==capSig||capIdx>=capPool.length){capPool=capBuild(keys);capIdx=0;capSig=keys;if(capCur&&capPool.length>1&&capPool[0][0]===capCur[0])capPool.push(capPool.shift());}
+  capCur=capPool[capIdx++];capEdited=false;capRender();onChange();
+}
+function capSyncChips(){const k=$('#capKeys').value;$$('.chip').forEach(c=>c.classList.toggle('on',k.includes(c.textContent)));}
+function capLines(){
+  if(!$('#capOn').checked)return [];
+  const parts=$('#capText').value.replace(/"/g,"'").split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  if(!parts.length)return [];
+  const st=$('#capStyle').value,pos=$('#capPos').value,lay=$('#capLayout').value,col=$('#capColor').value;
+  const out=[`/caption "${parts[0]}"`];
+  if(parts[1])out.push(`/caption_line2 "${parts[1]}"`);
+  out.push(`/caption_style ${st} /caption_pos ${pos} /caption_layout ${lay} /caption_color ${col}`+(pos==='safe'?' /caption_avoid_faces':'')+' /caption_exact');
+  const S={handwritten:'soft handwritten script',minimal:'clean minimal sans-serif',retro:'retro film-style typewriter',calligraphy:'elegant calligraphy',cinematic:'cinematic subtitle'}[st];
+  const P={safe:'in the emptiest area of the photo, away from faces and key subjects',bottom:'in the empty area at the bottom',top:'in the empty area at the top',left:'in the empty area on the left',right:'in the empty area on the right'}[pos];
+  const C={auto:'a color with good contrast against the background',white:'white',gold:'warm gold',dark:'dark'}[col];
+  const T=parts[1]?`two lines, "${parts[0]}" above "${parts[1]}"`:`"${parts[0]}"`;
+  out.push(`Add this caption onto the photo (${T}). Use ${S} lettering, ${lay==='vertical'?'vertical':'horizontal'} layout, placed ${P}, in ${C}. Write the text exactly as given, with no extra, missing or altered characters.`);
+  return out;
+}
+function capReset(){
+  $('#capOn').checked=false;$('#capBody').hidden=true;$('#capKeys').value='';$('#capText').value='';
+  capCur=null;capPool=[];capSig='';capEdited=false;$('#capGen').textContent='想一句';
+  $('#capShow').textContent='點「想一句」，這裡會出現文字';capSyncChips();
+}
+[['#capChipsP',['湖邊','海邊','山','夜景','花','街角','咖啡館','夕陽','雪','森林','雨','旅途']],['#capChipsM',['傷感','平靜','浪漫','開心','懷舊','溫柔','勇氣']]].forEach(([id,arr])=>{
+  arr.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t;
+    b.addEventListener('click',()=>{const ks=$('#capKeys').value.split(/[、,，\s]+/).filter(Boolean);const i=ks.indexOf(t);i<0?ks.push(t):ks.splice(i,1);$('#capKeys').value=ks.join('、');capSyncChips();});
+    $(id).appendChild(b);});
+});
+$('#capOn').addEventListener('change',()=>{$('#capBody').hidden=!$('#capOn').checked;});
+$('#capKeys').addEventListener('input',capSyncChips);
+$('#capGen').addEventListener('click',capNext);
+$('#capText').addEventListener('input',()=>{capEdited=true;onChange();});
+$('#capLang').addEventListener('change',()=>{if(capCur&&!capEdited){$('#capText').value=capTextFor(capCur);}onChange();});
+['#reset','#stickyReset'].forEach(s=>$(s).addEventListener('click',()=>{capReset();buildPrompt();$('#status').textContent='已重設為預設';}));
+
+/* ===== 我的預設（存在這支手機的瀏覽器裡）===== */
+const MINE_KEY='fantu_my_presets_v1';
+const mineLoad=()=>{try{return JSON.parse(localStorage.getItem(MINE_KEY)||'{}')}catch(e){return {}}};
+const mineStore=o=>{try{localStorage.setItem(MINE_KEY,JSON.stringify(o));return true}catch(e){return false}};
+const mineFields=()=>$$('input,select,textarea').filter(el=>el.id!=='output'&&el.id!=='autoUpdate'&&(el.id||el.name));
+const mineKey=el=>el.id||el.name+'|'+el.value;
+const mineIsBox=el=>el.type==='checkbox'||el.type==='radio';
+function mineApply(o){
+  mineFields().forEach(el=>{const k=mineKey(el);if(!(k in o))return;if(mineIsBox(el))el.checked=!!o[k];else el.value=o[k];});
+  $('#capBody').hidden=!$('#capOn').checked;capSyncChips();
+  capCur=null;capPool=[];capSig='';capEdited=true;$('#capGen').textContent='想一句';
+  $('#capShow').textContent=$('#capText').value||'點「想一句」，這裡會出現文字';
+  $$('.pill').forEach(p=>p.classList.remove('active'));
+  buildPrompt();
+}
+function mineRender(){
+  const box=$('#myPresets'),all=mineLoad(),names=Object.keys(all);
+  box.textContent='';
+  if(!names.length){const h=document.createElement('span');h.className='hint';h.textContent='還沒有儲存的預設。調好喜歡的組合，按下面的按鈕存起來。';box.appendChild(h);return;}
+  names.forEach(n=>{
+    const b=document.createElement('button');b.type='button';b.className='pill mine';b.textContent=n;
+    const x=document.createElement('span');x.className='x';x.textContent='×';x.setAttribute('aria-label','刪除 '+n);
+    x.addEventListener('click',e=>{e.stopPropagation();if(confirm('刪除預設「'+n+'」？')){const o=mineLoad();delete o[n];mineStore(o);mineRender();$('#status').textContent='已刪除：'+n;}});
+    b.appendChild(x);
+    b.addEventListener('click',()=>{mineApply(all[n]);$('#status').textContent='已套用：'+n;});
+    box.appendChild(b);
+  });
+}
+$('#saveMine').addEventListener('click',()=>{
+  let n=prompt('幫這組設定取個名字（12 字內）','');
+  if(!n)return;n=n.trim().slice(0,12);if(!n)return;
+  const o=mineLoad(),s={};
+  mineFields().forEach(el=>{s[mineKey(el)]=mineIsBox(el)?el.checked:el.value;});
+  o[n]=s;
+  $('#status').textContent=mineStore(o)?'已儲存：'+n:'儲存失敗，瀏覽器可能封鎖了儲存功能';
+  mineRender();
+});
+mineRender();
 
 syncPlatformOptions();
 buildPrompt();
