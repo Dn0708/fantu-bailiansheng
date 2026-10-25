@@ -143,6 +143,9 @@ textarea{resize:vertical}
 .presets.grid .pill{display:flex;align-items:center;justify-content:center;min-height:40px;padding:6px 4px;text-align:center;font-size:12.5px;line-height:1.3}
 .presets.grid .hint{grid-column:1/-1}
 .pill[data-preset=clear]{background:transparent;border-style:dashed;box-shadow:none;color:var(--muted)}
+.presets.grid#myPresets{display:flex;flex-wrap:wrap}
+#myPresets .pill{flex:1 1 calc(33.333% - 8px)}
+#myPresets .hint{flex:1 1 100%}
   .pill .x{margin-left:8px;padding:0 2px;opacity:.55;font-weight:700}
 .pill.mine{display:inline-flex;align-items:center}
 @media(max-width:560px){.fields{grid-template-columns:1fr}.options{gap:6px}.panel{padding:14px 11px 12px}.opt{font-size:12.5px}.opt .cmd{font-size:10px}}
@@ -173,17 +176,33 @@ textarea{resize:vertical}
     <button type="button" class="pill" data-preset="male">單人男性</button>
     <button type="button" class="pill" data-preset="female">單人女性</button>
     <button type="button" class="pill" data-preset="love">情侶紀念</button>
+    <button type="button" class="pill" data-preset="daily">生活日常</button>
   </div>
   <div class="pgroup">場景氛圍</div>
   <div class="presets grid">
     <button type="button" class="pill" data-preset="travel">旅遊</button>
-    <button type="button" class="pill" data-preset="wedding">婚紗</button>
     <button type="button" class="pill" data-preset="golden">金色夕陽底片</button>
     <button type="button" class="pill" data-preset="night">夜景燈火</button>
+    <button type="button" class="pill" data-preset="seaside">海邊清新</button>
+    <button type="button" class="pill" data-preset="jpclear">日系清透</button>
+    <button type="button" class="pill" data-preset="retro">復古底片日常</button>
+  </div>
+  <div class="pgroup">攝影師 · 常用場景</div>
+  <div class="presets grid">
+    <button type="button" class="pill" data-preset="ceremony">婚禮儀式</button>
+    <button type="button" class="pill" data-preset="wedshoot">婚紗側拍</button>
+    <button type="button" class="pill" data-preset="banquet">家宴聚餐</button>
+    <button type="button" class="pill" data-preset="kids">親子家庭</button>
+    <button type="button" class="pill" data-preset="grad">畢業紀念</button>
+    <button type="button" class="pill" data-preset="headshot">形象照</button>
+    <button type="button" class="pill" data-preset="studio">棚拍人像</button>
+    <button type="button" class="pill" data-preset="outdoor">外拍寫真</button>
+    <button type="button" class="pill" data-preset="event">活動紀錄</button>
   </div>
   <div class="pgroup">工具</div>
   <div class="presets grid">
     <button type="button" class="pill" data-preset="restore">清晰補救</button>
+    <button type="button" class="pill" data-preset="lowlight">低光補救</button>
     <button type="button" class="pill" data-preset="clear">清空</button>
   </div>
   <div class="subhead">我的預設</div>
@@ -423,6 +442,24 @@ textarea{resize:vertical}
       <p class="scene-note">AI 生圖畫中文字有時會寫錯字，指令已加上「逐字照寫」；若仍有錯，建議把文字改短，或先修圖再單獨加字。</p>
     </div>
   </section>
+  <section class="panel">
+    <h2><span class="num">10</span>署名浮水印 <span class="hint">選填 · 預設關閉 · 會記住設定</span></h2>
+    <label class="opt"><input type="checkbox" id="wmOn"><span>加上署名／浮水印<span class="cmd">/watermark</span></span></label>
+    <div id="wmBody" hidden>
+      <div class="field" style="margin-top:12px">
+        <label for="wmText">署名文字（工作室名稱或攝影師）</label>
+        <input id="wmText" type="text" placeholder="例如：Studio Fan ／ © 凡圖" autocomplete="off">
+      </div>
+      <div class="fields" style="margin-top:12px">
+        <div class="field"><label for="wmPos">位置</label><select id="wmPos"><option value="br">右下角</option><option value="bl">左下角</option><option value="tr">右上角</option><option value="tl">左上角</option><option value="bc">下方置中</option></select></div>
+        <div class="field"><label for="wmSize">大小</label><select id="wmSize"><option value="small">小</option><option value="medium">中</option></select></div>
+        <div class="field"><label for="wmOpacity">透明度</label><select id="wmOpacity"><option value="40">淡</option><option value="60" selected>中</option><option value="80">明顯</option></select></div>
+        <div class="field"><label for="wmStyle">字體風格</label><select id="wmStyle"><option value="minimal">簡約無襯線</option><option value="handwritten">手寫簽名</option><option value="typewriter">復古打字機</option><option value="serif">優雅襯線</option></select></div>
+        <div class="field"><label for="wmColor">顏色</label><select id="wmColor"><option value="white">白色</option><option value="dark">深色</option><option value="gold">暖金</option><option value="auto">依畫面自動</option></select></div>
+      </div>
+      <p class="scene-note">這是請 AI 把署名畫上去，位置和字形可能有小偏差。需要百分之百一致的署名，建議修完後再用相片 App 加，之後 app 版會改由程式直接加上。</p>
+    </div>
+  </section>
 </div>
 
 <!-- 6 保真 + 補充 -->
@@ -494,7 +531,7 @@ function updateSummary() {
     <span>共同 <b>${vals('shared').length}</b></span>
     <span>特效 <b>${vals('effect').length}</b></span>
     <span>場景 <b>${$('#sceneChoice')?.value ? 1 : 0}</b></span>
-    <span>文字 <b>${$('#capOn')?.checked && $('#capText')?.value.trim() ? 1 : 0}</b></span>
+    <span>文字 <b>${($('#capOn')?.checked && $('#capText')?.value.trim() ? 1 : 0) + ($('#wmOn')?.checked && $('#wmText')?.value.trim() ? 1 : 0)}</b></span>
   `;
 }
 
@@ -564,6 +601,7 @@ function buildPrompt() {
 
   // 文字點睛（第三分頁，預設關閉）
   lines.push(...capLines());
+  lines.push(...wmLines());
 
   // 保真
   const keep = [];
@@ -593,10 +631,29 @@ function buildPrompt() {
 
 function clearChecks() {
   $$('input[type="checkbox"]').forEach(x => {
-    if (x.id !== 'autoUpdate' && x.id !== 'capOn') x.checked = false;
+    if (x.id !== 'autoUpdate' && x.id !== 'capOn' && x.id !== 'wmOn') x.checked = false;
   });
 }
 
+const PH = {
+  ceremony:{t:'wedding',s:'wedding',i:'light',v:['/exposure','/whitebalance','/clarity','/colorgrade','/denoise'],k:1},
+  banquet:{t:'group',s:'warm',i:'light',v:['/exposure','/brighten','/whitebalance','/clarity','/denoise','/removeobject','/unify']},
+  kids:{t:'group',s:'soft',i:'light',v:['/exposure','/brighten','/whitebalance','/clarity','/unify']},
+  grad:{t:'life',s:'bright',i:'light',v:['/exposure','/brighten','/whitebalance','/clarity','/bokeh','/colorgrade']},
+  headshot:{t:'life',s:'polish',i:'medium',v:['/exposure','/whitebalance','/clarity','/facedetail','/bokeh','/removeobject','/unify'],k:1},
+  outdoor:{t:'life',s:'warm',i:'medium',v:['/exposure','/whitebalance','/clarity','/bokeh','/colorgrade','/dreamlight'],k:1},
+  daily:{t:'life',s:'natural',i:'light',v:['/exposure','/whitebalance','/clarity','/unify']},
+  seaside:{t:'travel',s:'bright',i:'light',v:['/exposure','/brighten','/whitebalance','/clarity','/colorgrade','/sunray','/wetsand']},
+  jpclear:{t:'life',s:'jp',i:'light',v:['/exposure','/brighten','/whitebalance','/colorgrade','/dreamlight']},
+  retro:{t:'life',s:'film',i:'light',v:['/exposure','/film','/colorgrade','/filmgrain','/lightleak']},
+  lowlight:{s:'natural',i:'light',v:['/exposure','/brighten','/whitebalance','/denoise','/clarity']}
+};
+function phApply(n) {
+  const c = PH[n];
+  if (c.t) $('#photoType').value = c.t; $('#style').value = c.s; $('#intensity').value = c.i;
+  c.v.forEach(v => { const x = document.querySelector(`input[value="${v}"]`); if (x) x.checked = true; });
+  if (c.k) ['keep_hair','keep_makeup'].forEach(id => $('#'+id).checked = true);
+}
 function applyPreset(name) {
   clearChecks();
   capReset();
@@ -688,6 +745,39 @@ function applyPreset(name) {
       $('#capLang').value = 'en'; $('#capStyle').value = 'cinematic';
       $('#capOn').checked = true; $('#capBody').hidden = false; $('#capKeys').value = '夜景、平靜'; capSyncChips(); capNext();
     },
+    wedshoot() {
+      // 婚紗側拍：快速出圖、修得自然，保留真實質感與髮型妝容
+      $('#photoType').value = 'wedding';
+      $('#style').value = 'natural';
+      $('#intensity').value = 'light';
+      ['/exposure','/whitebalance','/clarity','/denoise','/removeobject','/unify'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
+      ['keep_hair','keep_makeup'].forEach(id => $('#'+id).checked = true);
+    },
+    studio() {
+      // 棚拍人像：精緻上相、質感優先，不指定性別
+      $('#style').value = 'polish';
+      $('#intensity').value = 'medium';
+      ['/exposure','/whitebalance','/clarity','/colorgrade','/facedetail','/sharpen','/unify'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
+      ['keep_hair','keep_makeup'].forEach(id => $('#'+id).checked = true);
+    },
+    event() {
+      // 活動紀錄：明亮乾淨、整批一致，不做五官與身形修飾
+      $('#photoType').value = 'group';
+      $('#style').value = 'bright';
+      $('#intensity').value = 'light';
+      ['/exposure','/brighten','/whitebalance','/clarity','/denoise','/removeobject','/perspective','/unify'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
+    },
+    ceremony() { phApply('ceremony'); },
+    banquet() { phApply('banquet'); },
+    kids() { phApply('kids'); },
+    grad() { phApply('grad'); },
+    headshot() { phApply('headshot'); },
+    outdoor() { phApply('outdoor'); },
+    daily() { phApply('daily'); },
+    seaside() { phApply('seaside'); },
+    jpclear() { phApply('jpclear'); },
+    retro() { phApply('retro'); },
+    lowlight() { phApply('lowlight'); },
     golden() {
       // 金色夕陽底片：人物保守、氛圍加強，並保留髮型與妝容
       $('#photoType').value = 'female';
@@ -920,7 +1010,7 @@ const mineKey=el=>el.id||el.name+'|'+el.value;
 const mineIsBox=el=>el.type==='checkbox'||el.type==='radio';
 function mineApply(o){
   mineFields().forEach(el=>{const k=mineKey(el);if(!(k in o))return;if(mineIsBox(el))el.checked=!!o[k];else el.value=o[k];});
-  $('#capBody').hidden=!$('#capOn').checked;capSyncChips();
+  $('#capBody').hidden=!$('#capOn').checked;capSyncChips();$('#wmBody').hidden=!$('#wmOn').checked;wmSave();
   capCur=null;capPool=[];capSig='';capEdited=true;$('#capGen').textContent='想一句';
   $('#capShow').textContent=$('#capText').value||'點「想一句」，這裡會出現文字';
   $$('.pill').forEach(p=>p.classList.remove('active'));
@@ -949,6 +1039,25 @@ $('#saveMine').addEventListener('click',()=>{
   mineRender();
 });
 mineRender();
+
+/* ===== 署名浮水印 ===== */
+const WM_KEY='fantu_wm_v1',WM_IDS=['wmOn','wmText','wmPos','wmSize','wmOpacity','wmStyle','wmColor'];
+function wmLines(){
+  if(!$('#wmOn').checked)return [];
+  const t=$('#wmText').value.replace(/"/g,"'").trim();if(!t)return [];
+  const pos=$('#wmPos').value,size=$('#wmSize').value,op=$('#wmOpacity').value,st=$('#wmStyle').value,col=$('#wmColor').value;
+  const P={br:'bottom-right corner',bl:'bottom-left corner',tr:'top-right corner',tl:'top-left corner',bc:'bottom center'}[pos];
+  const S={minimal:'clean minimal sans-serif',handwritten:'handwritten signature',typewriter:'retro typewriter',serif:'elegant serif'}[st];
+  const C={white:'white',dark:'dark',gold:'warm gold',auto:'a color with good contrast'}[col];
+  return [`/watermark "${t}"`,`/watermark_pos ${pos} /watermark_size ${size} /watermark_opacity ${op} /watermark_style ${st} /watermark_color ${col} /watermark_exact`,
+    `Add a ${size==='small'?'small':'medium-sized'} semi-transparent watermark "${t}" in the ${P} of the photo, in ${S} lettering, ${C}, at about ${op}% opacity. Keep it clear of faces and key subjects. Write it exactly as given; the watermark must contain only this text.`];
+}
+function wmSave(){try{const o={};WM_IDS.forEach(i=>{const e=$('#'+i);o[i]=e.type==='checkbox'?e.checked:e.value});localStorage.setItem(WM_KEY,JSON.stringify(o));}catch(e){}}
+function wmLoad(){try{const o=JSON.parse(localStorage.getItem(WM_KEY)||'null');if(o)WM_IDS.forEach(i=>{if(!(i in o))return;const e=$('#'+i);if(e.type==='checkbox')e.checked=!!o[i];else e.value=o[i];});}catch(e){}$('#wmBody').hidden=!$('#wmOn').checked;}
+function wmReset(){$('#wmOn').checked=false;$('#wmBody').hidden=true;$('#wmText').value='';try{localStorage.removeItem(WM_KEY);}catch(e){}}
+WM_IDS.forEach(i=>['input','change'].forEach(ev=>$('#'+i).addEventListener(ev,()=>{$('#wmBody').hidden=!$('#wmOn').checked;wmSave();onChange();})));
+['#reset','#stickyReset'].forEach(s=>$(s).addEventListener('click',()=>{wmReset();buildPrompt();}));
+wmLoad();
 
 syncPlatformOptions();
 buildPrompt();
