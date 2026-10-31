@@ -146,6 +146,21 @@ textarea{resize:vertical}
 .presets.grid#myPresets{display:flex;flex-wrap:wrap}
 #myPresets .pill{flex:1 1 calc(33.333% - 8px)}
 #myPresets .hint{flex:1 1 100%}
+.opt.wide{grid-column:1/-1;order:-1}
+.chips.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.chips.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.chips.g4 .chip,.chips.g2 .segbtn{padding:8px 0;text-align:center}
+.segbtn{padding:5px 12px;border-radius:999px;border:1px solid #d9cdb6;background:#fbf6ea;color:#5d4c30;font:inherit;font-size:12.5px;cursor:pointer;transition:.2s;-webkit-tap-highlight-color:transparent}
+.segbtn:active{transform:scale(.95)}
+.segbtn.on{background:linear-gradient(135deg,#f6e3a6,#d6b062);border-color:#a77a2d;color:#2a1f0c;font-weight:650}
+.ogroup{margin-top:14px}
+.groups>.ogroup:first-child{margin-top:0}
+.ghead{display:flex;align-items:center;justify-content:space-between;margin:0 0 6px;font:400 14px var(--kai);color:#5d4c30}
+.gmax{padding:1px 9px;border-radius:999px;background:#f6eddb;font:400 11.5px system-ui,sans-serif;color:var(--muted)}
+.opt.adv{margin-top:10px}
+#toast{position:fixed;left:50%;bottom:calc(92px + var(--safe-bottom));transform:translate(-50%,10px);max-width:88vw;padding:9px 16px;border-radius:12px;background:rgba(20,17,12,.94);color:#f2e8d0;border:1px solid rgba(216,180,107,.5);font-size:12.5px;line-height:1.5;text-align:center;opacity:0;pointer-events:none;transition:.25s;z-index:200}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+@media(min-width:640px){#toast{bottom:24px}}
   .pill .x{margin-left:8px;padding:0 2px;opacity:.55;font-weight:700}
 .pill.mine{display:inline-flex;align-items:center}
 @media(max-width:560px){.fields{grid-template-columns:1fr}.options{gap:6px}.panel{padding:14px 11px 12px}.opt{font-size:12.5px}.opt .cmd{font-size:10px}}
@@ -207,6 +222,7 @@ textarea{resize:vertical}
   </div>
   <div class="subhead">我的預設</div>
   <div class="presets grid" id="myPresets"></div>
+  <label class="opt wide adv"><input type="checkbox" id="advMode"><span>進階模式：解除選項限制<span class="cmd">可自行疊加所有效果，不再自動取消</span></span></label>
   <div class="actions"><button type="button" class="btn secondary" id="saveMine">＋ 把目前設定存成我的預設</button></div>
 </section>
 
@@ -269,21 +285,35 @@ textarea{resize:vertical}
 <!-- 2 身形 -->
 <section class="panel">
   <h2><span class="num">2</span>身形與姿態 <span class="hint">可複選</span></h2>
-  <div class="options" id="bodyOpts">
-    <label class="opt"><input type="checkbox" name="body" value="/slimbody"><span>全身自然顯瘦<span class="cmd">/slimbody</span></span></label>
-    <label class="opt"><input type="checkbox" name="body" value="/fixwaist"><span>腰部修細<span class="cmd">/fixwaist</span></span></label>
-    <label class="opt"><input type="checkbox" name="body" value="/waistline"><span>強化腰線<span class="cmd">/waistline</span></span></label>
-    <label class="opt"><input type="checkbox" name="body" value="/flattummy"><span>腰腹收縮<span class="cmd">/flattummy</span></span></label>
-    <label class="opt"><input type="checkbox" name="body" value="/flatclothes"><span>衣服線條平坦<span class="cmd">/flatclothes</span></span></label>
-    <label class="opt"><input type="checkbox" name="body" value="/longlegs"><span>視覺拉長腿<span class="cmd">/longlegs</span></span></label>
-    <label class="opt"><input type="checkbox" name="body" value="/taller"><span>視覺增高<span class="cmd">/taller</span></span></label>
-    <label class="opt"><input type="checkbox" name="body" value="/fixlegs"><span>腿部修飾<span class="cmd">/fixlegs</span></span></label>
-    <label class="opt"><input type="checkbox" name="body" value="/fixarms"><span>手臂修飾<span class="cmd">/fixarms</span></span></label>
-    <label class="opt"><input type="checkbox" name="body" value="/headbody"><span>優化頭身比例<span class="cmd">/headbody</span></span></label>
-    <label class="opt"><input type="checkbox" name="body" value="/fixposture"><span>改善體態姿勢<span class="cmd">/fixposture</span></span></label>
-    <label class="opt"><input type="checkbox" name="body" value="/fixshoulder"><span>肩線與上半身<span class="cmd">/fixshoulder</span></span></label>
-    <label class="opt"><input type="checkbox" name="body" value="/fixclothes"><span>服裝線條整理<span class="cmd">/fixclothes</span></span></label>
-    <label class="opt"><input type="checkbox" name="body" value="/fixhands"><span>手部自然修飾<span class="cmd">/fixhands</span></span></label>
+  <div class="groups" id="bodyOpts">
+    <div class="ogroup" data-max="2"><div class="ghead"><span>整體腰腹</span><span class="gmax">最多選 2</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="body" value="/slimbody"><span>全身自然顯瘦<span class="cmd">/slimbody</span></span></label>
+        <label class="opt"><input type="checkbox" name="body" value="/fixwaist"><span>腰部修細<span class="cmd">/fixwaist</span></span></label>
+        <label class="opt"><input type="checkbox" name="body" value="/waistline"><span>強化腰線<span class="cmd">/waistline</span></span></label>
+        <label class="opt"><input type="checkbox" name="body" value="/flattummy"><span>腰腹收縮<span class="cmd">/flattummy</span></span></label>
+      </div></div>
+    <div class="ogroup" data-max="2"><div class="ghead"><span>腿部比例</span><span class="gmax">最多選 2</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="body" value="/longlegs"><span>視覺拉長腿<span class="cmd">/longlegs</span></span></label>
+        <label class="opt"><input type="checkbox" name="body" value="/taller"><span>視覺增高<span class="cmd">/taller</span></span></label>
+        <label class="opt"><input type="checkbox" name="body" value="/fixlegs"><span>腿部修飾<span class="cmd">/fixlegs</span></span></label>
+        <label class="opt"><input type="checkbox" name="body" value="/headbody"><span>優化頭身比例<span class="cmd">/headbody</span></span></label>
+      </div></div>
+    <div class="ogroup" data-max="0"><div class="ghead"><span>上身姿態</span><span class="gmax">可複選</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="body" value="/fixarms"><span>手臂修飾<span class="cmd">/fixarms</span></span></label>
+        <label class="opt"><input type="checkbox" name="body" value="/fixshoulder"><span>肩線與上半身<span class="cmd">/fixshoulder</span></span></label>
+        <label class="opt"><input type="checkbox" name="body" value="/fixposture"><span>改善體態姿勢<span class="cmd">/fixposture</span></span></label>
+        <label class="opt"><input type="checkbox" name="body" value="/fixhands"><span>手部自然修飾<span class="cmd">/fixhands</span></span></label>
+      </div></div>
+    <div class="ogroup" data-max="2"><div class="ghead"><span>服裝線條</span><span class="gmax">最多選 2</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="body" value="/flatclothes"><span>衣服線條平坦<span class="cmd">/flatclothes</span></span></label>
+        <label class="opt"><input type="checkbox" name="body" value="/fixclothes"><span>服裝線條整理<span class="cmd">/fixclothes</span></span></label>
+        <label class="opt"><input type="checkbox" name="body" value="/fixwrinkle"><span>衣服皺褶整理<span class="cmd">/fixwrinkle</span></span></label>
+        <label class="opt"><input type="checkbox" name="body" value="/fixcollar"><span>領口衣擺整理<span class="cmd">/fixcollar</span></span></label>
+      </div></div>
   </div>
 </section>
 
@@ -291,9 +321,9 @@ textarea{resize:vertical}
 <section class="panel">
   <h2><span class="num">3</span>男性修容 <span class="hint">可複選 · 只作用男性</span></h2>
   <div class="options" id="maleOpts">
-    <label class="opt"><input type="checkbox" name="male" value="/male_contour" checked><span>柔化方正輪廓<span class="cmd">/male_contour</span></span></label>
-    <label class="opt"><input type="checkbox" name="male" value="/male_jaw" checked><span>修整臉部肉感<span class="cmd">/male_jaw</span></span></label>
-    <label class="opt"><input type="checkbox" name="male" value="/male_undereye" checked><span>減輕眼袋疲憊<span class="cmd">/male_undereye</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_contour"><span>柔化方正輪廓<span class="cmd">/male_contour</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_jaw"><span>修整臉部肉感<span class="cmd">/male_jaw</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_undereye"><span>減輕眼袋疲憊<span class="cmd">/male_undereye</span></span></label>
     <label class="opt"><input type="checkbox" name="male" value="/male_face"><span>臉型比例微調<span class="cmd">/male_face</span></span></label>
     <label class="opt"><input type="checkbox" name="male" value="/male_jawline"><span>下顎線與頸部<span class="cmd">/male_jawline</span></span></label>
     <label class="opt"><input type="checkbox" name="male" value="/male_brow"><span>眉眼光影調整<span class="cmd">/male_brow</span></span></label>
@@ -305,8 +335,9 @@ textarea{resize:vertical}
     <label class="opt"><input type="checkbox" name="male" value="/male_skin"><span>男性膚質精修<span class="cmd">/male_skin</span></span></label>
     <label class="opt"><input type="checkbox" name="male" value="/male_oil"><span>油光與膚色<span class="cmd">/male_oil</span></span></label>
     <label class="opt"><input type="checkbox" name="male" value="/male_energy"><span>提升精神氣色<span class="cmd">/male_energy</span></span></label>
-    <label class="opt"><input type="checkbox" name="male" value="/male_keep"><span>保留男性特徵<span class="cmd">/male_keep</span></span></label>
+    <label class="opt wide"><input type="checkbox" name="male" value="/male_keep"><span>保留男性特徵<span class="cmd">/male_keep</span></span></label>
     <label class="opt"><input type="checkbox" name="male" value="/male_blemish"><span>局部瑕疵修整<span class="cmd">/male_blemish</span></span></label>
+    <label class="opt"><input type="checkbox" name="male" value="/male_beard"><span>鬍鬚整理<span class="cmd">/male_beard</span></span></label>
   </div>
 </section>
 
@@ -315,7 +346,7 @@ textarea{resize:vertical}
   <h2><span class="num">4</span>女性精修 <span class="hint">可複選 · 只作用女性</span></h2>
   <p class="desc">建議優先勾選「維持原有效果」。勾其他項會自動取消它。</p>
   <div class="options" id="femaleOpts">
-    <label class="opt"><input type="checkbox" name="female" value="/female_keep" checked><span>維持原有效果<span class="cmd">/female_keep</span></span></label>
+    <label class="opt wide"><input type="checkbox" name="female" value="/female_keep" checked><span>維持原有效果<span class="cmd">/female_keep</span></span></label>
     <label class="opt"><input type="checkbox" name="female" value="/female_face"><span>臉型與下顎線<span class="cmd">/female_face</span></span></label>
     <label class="opt"><input type="checkbox" name="female" value="/female_undereye"><span>眼周與精神感<span class="cmd">/female_undereye</span></span></label>
     <label class="opt"><input type="checkbox" name="female" value="/female_skin"><span>膚質與瑕疵<span class="cmd">/female_skin</span></span></label>
@@ -338,28 +369,39 @@ textarea{resize:vertical}
 <!-- 5 共同 -->
 <section class="panel">
   <h2><span class="num">5</span>光線 · 色彩 · 背景 <span class="hint">可複選</span></h2>
-  <div class="options" id="sharedOpts">
-    <label class="opt"><input type="checkbox" name="shared" value="/exposure"><span>修正曝光明暗<span class="cmd">/exposure</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/brighten"><span>整體提亮<span class="cmd">/brighten</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/whitebalance"><span>白平衡膚色協調<span class="cmd">/whitebalance</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/clarity"><span>清晰度與細節<span class="cmd">/clarity</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/cinematic"><span>電影感色調<span class="cmd">/cinematic</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/film"><span>復古底片感<span class="cmd">/film</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/bokeh"><span>背景自然虛化<span class="cmd">/bokeh</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/removeobject"><span>清理背景雜物<span class="cmd">/removeobject</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/extend"><span>延伸畫面<span class="cmd">/extend</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/remove_specific"><span>移除指定物件<span class="cmd">/remove_specific</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/changebg"><span>更換背景<span class="cmd">/changebg</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/colorgrade"><span>色彩與對比<span class="cmd">/colorgrade</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/perspective"><span>透視與水平校正<span class="cmd">/perspective</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/unify"><span>整體色調統一<span class="cmd">/unify</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/deblur"><span>修復模糊與對焦<span class="cmd">/deblur</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/denoise"><span>降噪去顆粒<span class="cmd">/denoise</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/sharpen"><span>加強輪廓邊緣<span class="cmd">/sharpen</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/upscale"><span>提升解析度與細節<span class="cmd">/upscale</span></span></label>
-    <label class="opt"><input type="checkbox" name="shared" value="/facedetail"><span>臉部細節更清晰<span class="cmd">/facedetail</span></span></label>
+  <div class="groups" id="sharedOpts">
+    <div class="ogroup" data-max="0"><div class="ghead"><span>光線校正</span><span class="gmax">可複選</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="shared" value="/exposure"><span>修正曝光明暗<span class="cmd">/exposure</span></span></label>
+        <label class="opt"><input type="checkbox" name="shared" value="/brighten"><span>整體提亮<span class="cmd">/brighten</span></span></label>
+        <label class="opt"><input type="checkbox" name="shared" value="/whitebalance"><span>白平衡膚色協調<span class="cmd">/whitebalance</span></span></label>
+        <label class="opt"><input type="checkbox" name="shared" value="/backlight"><span>逆光補光<span class="cmd">/backlight</span></span></label>
+      </div></div>
+    <div class="ogroup" data-max="1"><div class="ghead"><span>色調風格</span><span class="gmax">最多選 1</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="shared" value="/cinematic"><span>電影感色調<span class="cmd">/cinematic</span></span></label>
+        <label class="opt"><input type="checkbox" name="shared" value="/film"><span>復古底片感<span class="cmd">/film</span></span></label>
+        <label class="opt"><input type="checkbox" name="shared" value="/colorgrade"><span>色彩與對比<span class="cmd">/colorgrade</span></span></label>
+        <label class="opt"><input type="checkbox" name="shared" value="/jpclear"><span>日系清透色調<span class="cmd">/jpclear</span></span></label>
+      </div></div>
+    <div class="ogroup" data-max="0"><div class="ghead"><span>畫質修正</span><span class="gmax">可複選</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="shared" value="/hires"><span>高清畫質<span class="cmd">/hires</span></span></label>
+        <label class="opt"><input type="checkbox" name="shared" value="/denoise"><span>降噪去顆粒<span class="cmd">/denoise</span></span></label>
+        <label class="opt"><input type="checkbox" name="shared" value="/perspective"><span>透視與水平校正<span class="cmd">/perspective</span></span></label>
+        <label class="opt"><input type="checkbox" name="shared" value="/unify"><span>整體色調統一<span class="cmd">/unify</span></span></label>
+      </div></div>
+    <div class="ogroup" data-max="0"><div class="ghead"><span>背景處理</span><span class="gmax">可複選</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="shared" value="/skyboost"><span>天空增強<span class="cmd">/skyboost</span></span></label>
+        <label class="opt"><input type="checkbox" name="shared" value="/bokeh"><span>背景自然虛化<span class="cmd">/bokeh</span></span></label>
+        <label class="opt"><input type="checkbox" name="shared" value="/removeobject"><span>清理背景雜物<span class="cmd">/removeobject</span></span></label>
+        <label class="opt"><input type="checkbox" name="shared" value="/remove_specific"><span>移除指定物件<span class="cmd">/remove_specific</span></span></label>
+        <label class="opt"><input type="checkbox" name="shared" value="/extend"><span>延伸畫面<span class="cmd">/extend</span></span></label>
+        <label class="opt"><input type="checkbox" name="shared" value="/changebg"><span>更換背景<span class="cmd">/changebg</span></span></label>
+      </div></div>
   </div>
-  <p class="scene-note">畫質強化是請 AI 重建細節，不是無損放大。原圖太糊時，建議先選「修復模糊」「降噪」再加輪廓，並保持「保留身分五官」開啟，避免臉被重畫。</p>
+  <p class="scene-note">高清畫質是請 AI 重建細節，輸出尺寸依 AI 工具而定，不是無損放大。原圖很糊時可搭配「降噪」，並保持「保留身分五官」開啟，避免臉被重畫。</p>
 </section>
 
 </div><!-- /personTab：原有人物修改區完整保留 -->
@@ -367,20 +409,31 @@ textarea{resize:vertical}
 <div id="sceneTab" class="tab-panel" role="tabpanel" aria-labelledby="sceneTabBtn" hidden>
   <section class="panel">
     <h2><span class="num">7</span>氛圍特效 <span class="hint">可複選</span></h2>
-    <div class="options" id="effectOpts">
-      <label class="opt"><input type="checkbox" name="effect" value="/sunray"><span>陽光灑落<span class="cmd">/sunray</span></span></label>
-      <label class="opt"><input type="checkbox" name="effect" value="/petals"><span>飄落花瓣<span class="cmd">/petals</span></span></label>
-      <label class="opt"><input type="checkbox" name="effect" value="/snow"><span>浪漫飄雪<span class="cmd">/snow</span></span></label>
-      <label class="opt"><input type="checkbox" name="effect" value="/mist"><span>自然薄霧<span class="cmd">/mist</span></span></label>
-      <label class="opt"><input type="checkbox" name="effect" value="/dreamlight"><span>夢幻光影<span class="cmd">/dreamlight</span></span></label>
-      <label class="opt"><input type="checkbox" name="effect" value="/rain"><span>細雨氛圍<span class="cmd">/rain</span></span></label>
-      <label class="opt"><input type="checkbox" name="effect" value="/sunset"><span>夕陽暖光<span class="cmd">/sunset</span></span></label>
-      <label class="opt"><input type="checkbox" name="effect" value="/sparkle"><span>夢幻光點<span class="cmd">/sparkle</span></span></label>
-      <label class="opt"><input type="checkbox" name="effect" value="/goldenhour"><span>金色夕陽<span class="cmd">/goldenhour</span></span></label>
-      <label class="opt"><input type="checkbox" name="effect" value="/wetsand"><span>濕沙倒影<span class="cmd">/wetsand</span></span></label>
-      <label class="opt"><input type="checkbox" name="effect" value="/lightleak"><span>底片漏光<span class="cmd">/lightleak</span></span></label>
-      <label class="opt"><input type="checkbox" name="effect" value="/filmgrain"><span>底片顆粒灰塵<span class="cmd">/filmgrain</span></span></label>
-    </div>
+    <div class="groups" id="effectOpts">
+    <div class="ogroup" data-max="1"><div class="ghead"><span>日光氛圍</span><span class="gmax">最多選 1</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="effect" value="/goldenhour"><span>金色夕陽<span class="cmd">/goldenhour</span></span></label>
+        <label class="opt"><input type="checkbox" name="effect" value="/sunset"><span>夕陽暖光<span class="cmd">/sunset</span></span></label>
+        <label class="opt"><input type="checkbox" name="effect" value="/sunray"><span>陽光灑落<span class="cmd">/sunray</span></span></label>
+        <label class="opt"><input type="checkbox" name="effect" value="/bluehour"><span>藍調時刻<span class="cmd">/bluehour</span></span></label>
+      </div></div>
+    <div class="ogroup" data-max="1"><div class="ghead"><span>天氣氛圍</span><span class="gmax">最多選 1</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="effect" value="/snow"><span>浪漫飄雪<span class="cmd">/snow</span></span></label>
+        <label class="opt"><input type="checkbox" name="effect" value="/rain"><span>細雨氛圍<span class="cmd">/rain</span></span></label>
+        <label class="opt"><input type="checkbox" name="effect" value="/mist"><span>自然薄霧<span class="cmd">/mist</span></span></label>
+        <label class="opt"><input type="checkbox" name="effect" value="/petals"><span>飄落花瓣<span class="cmd">/petals</span></span></label>
+      </div></div>
+    <div class="ogroup" data-max="2"><div class="ghead"><span>質感點綴</span><span class="gmax">最多選 2</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="effect" value="/dreamlight"><span>夢幻光影<span class="cmd">/dreamlight</span></span></label>
+        <label class="opt"><input type="checkbox" name="effect" value="/sparkle"><span>夢幻光點<span class="cmd">/sparkle</span></span></label>
+        <label class="opt"><input type="checkbox" name="effect" value="/wetsand"><span>濕沙倒影<span class="cmd">/wetsand</span></span></label>
+        <label class="opt"><input type="checkbox" name="effect" value="/lightleak"><span>底片漏光<span class="cmd">/lightleak</span></span></label>
+        <label class="opt"><input type="checkbox" name="effect" value="/filmgrain"><span>底片顆粒灰塵<span class="cmd">/filmgrain</span></span></label>
+        <label class="opt"><input type="checkbox" name="effect" value="/vignette"><span>暗角暈影<span class="cmd">/vignette</span></span></label>
+      </div></div>
+  </div>
   </section>
   <section class="panel">
     <h2><span class="num">8</span>場景選擇 <span class="hint">單選</span></h2>
@@ -424,8 +477,11 @@ textarea{resize:vertical}
         <label for="capKeys">這張照片的感覺（地點＋心情）</label>
         <input id="capKeys" type="text" placeholder="例如：湖邊、傷感" autocomplete="off">
       </div>
-      <div class="subhead">地點</div><div class="chips" id="capChipsP"></div>
-      <div class="subhead">心情</div><div class="chips" id="capChipsM"></div>
+      <div class="subhead">地點</div><div class="chips g4" id="capChipsP"></div>
+      <div class="subhead">心情</div><div class="chips g4" id="capChipsM"></div>
+      <div class="subhead">句子來源</div>
+      <input type="hidden" id="capSrc" value="orig">
+      <div class="chips g2"><button type="button" class="segbtn on" data-src="orig">原創</button><button type="button" class="segbtn" data-src="poem">古典詩詞</button></div>
       <div class="actions"><button type="button" class="btn primary" id="capGen">想一句</button></div>
       <div class="cap-line" id="capShow">點「想一句」，這裡會出現文字</div>
       <div class="field" style="margin-top:12px">
@@ -556,6 +612,20 @@ function syncSceneConflict(source = 'auto') {
   }
 }
 
+const SCENE_DESC = {
+  '/taipei101':'the Taipei 101 tower and the Taipei city skyline under a clear blue sky',
+  '/jiufen':'Jiufen Old Street in Taiwan, with narrow stone stairs, red lanterns and teahouses on the hillside in warm dusk light',
+  '/tamsui':'the Tamsui riverside promenade in Taiwan, with Guanyin Mountain across the water and a golden sunset reflecting on the river',
+  '/shanlinxi':'Shanlinxi forest in Nantou, Taiwan, with tall cedar trees, soft mist and sunlight filtering through the canopy',
+  '/alishan':'Alishan in Taiwan, with a sea of clouds at sunrise and towering cypress trees',
+  '/xpark':'the Xpark aquarium jellyfish wall in Taiwan, with glowing jellyfish tanks and blue light',
+  '/sakura':'a Japanese street lined with blooming cherry blossoms and soft pink petals in the air',
+  '/paris':'a Parisian street with classic Haussmann buildings, café terraces and the Eiffel Tower in the distance',
+  '/beach':'a sunset beach with the sun on the horizon, gentle waves and glowing wet sand',
+  '/forest':'a quiet forest trail with tall trees, dappled sunlight and fresh green foliage',
+  '/studio':'a professional photo studio with a clean seamless backdrop and soft studio lighting',
+  '/cyberpunk':'a neon-lit futuristic city street at night, with glowing signs, wet pavement and magenta and cyan lights'
+};
 function buildPrompt() {
   syncSceneConflict();
   const platform = $('#platform').value;
@@ -599,6 +669,9 @@ function buildPrompt() {
     if (sceneDetails) lines.push(`/scene_details ${sceneDetails}`);
   }
 
+  // 高清：只在選了 /hires 時附上完整說明
+  if (shared.includes('/hires')) lines.push('Output at the highest possible quality (4K resolution if supported). Keep the current look, the face and the composition unchanged.');
+
   // 文字點睛（第三分頁，預設關閉）
   lines.push(...capLines());
   lines.push(...wmLines());
@@ -612,6 +685,12 @@ function buildPrompt() {
   if ($('#keep_hair').checked) keep.push('/keep_hair');
   if ($('#keep_makeup').checked) keep.push('/keep_makeup');
   if (keep.length) lines.push(keep.join(' '));
+
+  // 場景替換：附上 AI 一定看得懂的完整說明，避免只剩一個指令名稱被當成氣氛
+  const sceneText = scene === 'custom' ? [customScene, sceneDetails].filter(Boolean).join(', ') : (SCENE_DESC[scene] || '');
+  if (scene && sceneText) {
+    lines.push(`Replace the background of this photo with ${sceneText}. This is a background replacement: the new background must clearly differ from the original photo. Keep the people, their poses, clothing and faces as they are, and match the lighting, color tone, perspective and shadows to the new scene so it looks like a real photograph.`);
+  }
 
   // 補充
   if (custom) lines.push(`/note ${custom}`);
@@ -631,22 +710,23 @@ function buildPrompt() {
 
 function clearChecks() {
   $$('input[type="checkbox"]').forEach(x => {
-    if (x.id !== 'autoUpdate' && x.id !== 'capOn' && x.id !== 'wmOn') x.checked = false;
+    if (x.id !== 'autoUpdate' && x.id !== 'capOn' && x.id !== 'wmOn' && x.id !== 'advMode') x.checked = false;
   });
 }
 
+const HIRES_SET = ['restore','studio','golden','headshot'];
 const PH = {
-  ceremony:{t:'wedding',s:'wedding',i:'light',v:['/exposure','/whitebalance','/clarity','/colorgrade','/denoise'],k:1},
-  banquet:{t:'group',s:'warm',i:'light',v:['/exposure','/brighten','/whitebalance','/clarity','/denoise','/removeobject','/unify']},
-  kids:{t:'group',s:'soft',i:'light',v:['/exposure','/brighten','/whitebalance','/clarity','/unify']},
-  grad:{t:'life',s:'bright',i:'light',v:['/exposure','/brighten','/whitebalance','/clarity','/bokeh','/colorgrade']},
-  headshot:{t:'life',s:'polish',i:'medium',v:['/exposure','/whitebalance','/clarity','/facedetail','/bokeh','/removeobject','/unify'],k:1},
-  outdoor:{t:'life',s:'warm',i:'medium',v:['/exposure','/whitebalance','/clarity','/bokeh','/colorgrade','/dreamlight'],k:1},
-  daily:{t:'life',s:'natural',i:'light',v:['/exposure','/whitebalance','/clarity','/unify']},
-  seaside:{t:'travel',s:'bright',i:'light',v:['/exposure','/brighten','/whitebalance','/clarity','/colorgrade','/sunray','/wetsand']},
-  jpclear:{t:'life',s:'jp',i:'light',v:['/exposure','/brighten','/whitebalance','/colorgrade','/dreamlight']},
-  retro:{t:'life',s:'film',i:'light',v:['/exposure','/film','/colorgrade','/filmgrain','/lightleak']},
-  lowlight:{s:'natural',i:'light',v:['/exposure','/brighten','/whitebalance','/denoise','/clarity']}
+  ceremony:{t:'wedding',s:'wedding',i:'light',v:['/exposure','/whitebalance','/colorgrade','/denoise'],k:1},
+  banquet:{t:'group',s:'warm',i:'light',v:['/exposure','/brighten','/whitebalance','/denoise','/removeobject','/unify']},
+  kids:{t:'group',s:'soft',i:'light',v:['/exposure','/brighten','/whitebalance','/unify']},
+  grad:{t:'life',s:'bright',i:'light',v:['/exposure','/brighten','/whitebalance','/bokeh','/colorgrade']},
+  headshot:{t:'life',s:'polish',i:'medium',v:['/exposure','/whitebalance','/bokeh','/removeobject','/unify'],k:1},
+  outdoor:{t:'life',s:'warm',i:'medium',v:['/exposure','/whitebalance','/bokeh','/colorgrade','/dreamlight'],k:1},
+  daily:{t:'life',s:'natural',i:'light',v:['/exposure','/whitebalance','/unify']},
+  seaside:{t:'travel',s:'bright',i:'light',v:['/exposure','/brighten','/whitebalance','/colorgrade','/sunray','/wetsand']},
+  jpclear:{t:'life',s:'jp',i:'light',v:['/exposure','/brighten','/whitebalance','/jpclear','/dreamlight']},
+  retro:{t:'life',s:'film',i:'light',v:['/exposure','/film','/filmgrain','/lightleak']},
+  lowlight:{s:'natural',i:'light',v:['/exposure','/brighten','/whitebalance','/denoise']}
 };
 function phApply(n) {
   const c = PH[n];
@@ -666,7 +746,7 @@ function applyPreset(name) {
       $('#intensity').value = 'medium';
       $$('input[name="male"]').slice(0,3).forEach(x => x.checked = true);
       $$('input[name="female"]')[0].checked = true;
-      [0,2,3].forEach(i => $$('input[name="shared"]')[i].checked = true);
+      [0,2,3].forEach(i => pickOrig('shared', i));
     },
     family() {
       // 合照／家庭：多人分開處理，輕度自然，男女都照顧但不過度
@@ -677,9 +757,9 @@ function applyPreset(name) {
       $$('input[name="male"]')[7].checked = true; // 膚質
       $$('input[name="male"]')[9].checked = true; // 精神
       $$('input[name="female"]')[0].checked = true; // 維持原有效果
-      $$('input[name="body"]')[0].checked = true; // 全身自然顯瘦
-      $$('input[name="body"]')[8].checked = true; // 改善體態姿勢
-      [0,2,3,13].forEach(i => $$('input[name="shared"]')[i].checked = true); // 曝光、白平衡、清晰度、色調統一
+      pickOrig('body', 0); // 全身自然顯瘦
+      pickOrig('body', 8); // 改善體態姿勢
+      [0,2,3,13].forEach(i => pickOrig('shared', i)); // 曝光、白平衡、清晰度、色調統一
     },
     male() {
       $('#photoType').value = 'male';
@@ -688,14 +768,14 @@ function applyPreset(name) {
       $$('input[name="male"]').slice(0,6).forEach(x => x.checked = true);
       $$('input[name="male"]')[7].checked = true;
       $$('input[name="male"]')[9].checked = true;
-      [0,2,3].forEach(i => $$('input[name="shared"]')[i].checked = true);
+      [0,2,3].forEach(i => pickOrig('shared', i));
     },
     female() {
       $('#photoType').value = 'female';
       $('#style').value = 'natural';
       $('#intensity').value = 'light';
       $$('input[name="female"]')[0].checked = true;
-      [0,2,3].forEach(i => $$('input[name="shared"]')[i].checked = true);
+      [0,2,3].forEach(i => pickOrig('shared', i));
     },
     travel() {
       $('#photoType').value = 'travel';
@@ -703,8 +783,8 @@ function applyPreset(name) {
       $('#intensity').value = 'medium';
       $$('input[name="male"]').slice(0,3).forEach(x => x.checked = true);
       $$('input[name="female"]')[0].checked = true;
-      $$('input[name="body"]')[0].checked = true;
-      [0,2,3,6].forEach(i => $$('input[name="shared"]')[i].checked = true);
+      pickOrig('body', 0);
+      [0,2,3,6].forEach(i => pickOrig('shared', i));
     },
     wedding() {
       $('#photoType').value = 'wedding';
@@ -712,9 +792,9 @@ function applyPreset(name) {
       $('#intensity').value = 'medium';
       $$('input[name="male"]').slice(0,4).forEach(x => x.checked = true);
       $$('input[name="female"]')[0].checked = true;
-      $$('input[name="body"]')[0].checked = true;
-      $$('input[name="body"]')[1].checked = true;
-      [0,2,3,6].forEach(i => $$('input[name="shared"]')[i].checked = true);
+      pickOrig('body', 0);
+      pickOrig('body', 1);
+      [0,2,3,6].forEach(i => pickOrig('shared', i));
     },
     love() {
       // 情侶紀念：柔和自然，附一句浪漫文字
@@ -723,7 +803,7 @@ function applyPreset(name) {
       $('#intensity').value = 'light';
       $$('input[name="male"]').slice(0,3).forEach(x => x.checked = true);
       $$('input[name="female"]')[0].checked = true;
-      ['/exposure','/whitebalance','/clarity'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
+      ['/exposure','/whitebalance'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
       ['/dreamlight','/sparkle'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
       $('#capLang').value = 'both'; $('#capStyle').value = 'handwritten';
       $('#capOn').checked = true; $('#capBody').hidden = false; $('#capKeys').value = '浪漫'; capSyncChips(); capNext();
@@ -732,7 +812,7 @@ function applyPreset(name) {
       // 清晰補救：給模糊、低畫質的舊照片，不改變人物類型
       $('#style').value = 'natural';
       $('#intensity').value = 'light';
-      ['/deblur','/denoise','/sharpen','/upscale','/facedetail','/clarity'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
+      ['/denoise'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
     },
     night() {
       // 夜景燈火：電影感、降噪、光點氛圍，附一句夜景文字
@@ -740,7 +820,7 @@ function applyPreset(name) {
       $('#style').value = 'cinematic';
       $('#intensity').value = 'medium';
       $$('input[name="female"]')[0].checked = true;
-      ['/exposure','/cinematic','/bokeh','/colorgrade','/denoise'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
+      ['/exposure','/cinematic','/bokeh','/denoise'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
       ['/dreamlight','/sparkle'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
       $('#capLang').value = 'en'; $('#capStyle').value = 'cinematic';
       $('#capOn').checked = true; $('#capBody').hidden = false; $('#capKeys').value = '夜景、平靜'; capSyncChips(); capNext();
@@ -750,14 +830,14 @@ function applyPreset(name) {
       $('#photoType').value = 'wedding';
       $('#style').value = 'natural';
       $('#intensity').value = 'light';
-      ['/exposure','/whitebalance','/clarity','/denoise','/removeobject','/unify'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
+      ['/exposure','/whitebalance','/denoise','/removeobject','/unify'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
       ['keep_hair','keep_makeup'].forEach(id => $('#'+id).checked = true);
     },
     studio() {
       // 棚拍人像：精緻上相、質感優先，不指定性別
       $('#style').value = 'polish';
       $('#intensity').value = 'medium';
-      ['/exposure','/whitebalance','/clarity','/colorgrade','/facedetail','/sharpen','/unify'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
+      ['/exposure','/whitebalance','/colorgrade','/unify'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
       ['keep_hair','keep_makeup'].forEach(id => $('#'+id).checked = true);
     },
     event() {
@@ -765,7 +845,7 @@ function applyPreset(name) {
       $('#photoType').value = 'group';
       $('#style').value = 'bright';
       $('#intensity').value = 'light';
-      ['/exposure','/brighten','/whitebalance','/clarity','/denoise','/removeobject','/perspective','/unify'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
+      ['/exposure','/brighten','/whitebalance','/denoise','/removeobject','/perspective','/unify'].forEach(v => document.querySelector(`input[value="${v}"]`).checked = true);
     },
     ceremony() { phApply('ceremony'); },
     banquet() { phApply('banquet'); },
@@ -784,8 +864,8 @@ function applyPreset(name) {
       $('#style').value = 'warm';
       $('#intensity').value = 'light';
       $$('input[name="female"]')[0].checked = true;
-      [0,2,3].forEach(i => $$('input[name="shared"]')[i].checked = true);
-      ['/cinematic','/facedetail','/sunset','/sunray','/goldenhour','/wetsand','/lightleak','/filmgrain'].forEach(v => {
+      [0,2,3].forEach(i => pickOrig('shared', i));
+      ['/cinematic','/goldenhour','/wetsand','/lightleak'].forEach(v => {
         const x = document.querySelector(`input[value="${v}"]`);
         if (x) x.checked = true;
       });
@@ -803,6 +883,9 @@ function applyPreset(name) {
   };
 
   if (set[name]) set[name]();
+  const hi = document.querySelector('input[value="/hires"]');
+  if (hi) hi.checked = HIRES_SET.includes(name);
+  if (typeof enforceAll === 'function') enforceAll();
   $$('.pill').forEach(p => p.classList.remove('active'));
   const btn = $(`.pill[data-preset="${name}"]`);
   if (btn && name !== 'clear') btn.classList.add('active');
@@ -883,7 +966,6 @@ function doReset() {
   clearChecks();
   if ($('#sceneChoice')) $('#sceneChoice').value = '';
   ['keep_id','keep_scene','keep_texture','keep_body'].forEach(id => $('#'+id).checked = true);
-  $$('input[name="male"]').slice(0,3).forEach(x => x.checked = true);
   $$('input[name="female"]')[0].checked = true;
   $('#platform').value = 'general';
   $('#photoType').value = 'couple';
@@ -931,43 +1013,98 @@ $$('input[name="female"]').forEach((cb, i) => {
 /* ===== 文字點睛（第三分頁）===== */
 const CAP_SCENES=[['湖','湖光裡','by the lake'],['海','潮聲裡','by the sea'],['山','山風中','in the mountain wind'],['夜,城市,燈','燈火裡','in the city lights'],['花,櫻','花影間','among the blossoms'],['街','街角的光裡','in the glow of the street'],['咖啡','咖啡香裡','in the scent of coffee'],['夕陽,日落,黃昏','暮色裡','in the dusk'],['雪','雪色中','in the snow'],['森林,林','林蔭裡','under the trees'],['旅,路','旅途中','on the road'],['家','屋簷下','under this roof'],['雨','雨聲裡','in the sound of rain'],['風','風過處','where the wind passes']];
 const CAP_MOODS={
-傷感:['傷,難過,孤,想念,思念,失落,悲,哭,寂寞',[['有些想念，只適合留在{s}。','Some longing stays {e}.'],['把沒說完的話，輕輕放在{s}。','Unspoken words rest softly {e}.'],['風過了，名字還在{s}。','The wind has passed; your name remains {e}.'],['走遠了，心還留在{s}。','I walked on, but my heart stayed {e}.'],['月光很輕，想念很重。','Moonlight is light; longing is heavy.'],['你不在，{s}也安靜了。','You are gone, and the quiet deepens {e}.']]],
-平靜:['靜,平靜,療癒,放鬆,慢',[['在{s}，心慢慢安靜下來。','{e}, the heart slowly settles.'],['不急，{s}的時間很慢。','No rush; time moves slowly {e}.'],['把一切放下，只剩呼吸。','Let everything go; only breath remains.'],['靜靜站著，也是一種前進。','To stand still is also a way forward.'],['在{s}，剛好，不多也不少。','Just enough {e}, nothing more, nothing less.'],['風停了，心也落了地。','The wind stops; the heart touches ground.']]],
-浪漫:['浪漫,愛,甜,戀,喜歡,情侶,夫妻,婚',[['在{s}遇見你，風都變軟了。','Meeting you {e}, even the wind softens.'],['光落在你肩上，我落在你眼裡。','Light falls on your shoulder; I fall into your eyes.'],['把喜歡藏進{s}，只說給你聽。','I hide my love {e}, to tell only you.'],['這一刻，{s}只屬於我們。','This moment, {e} belongs only to us.'],['世界很大，你剛好在這。','The world is vast; you are just here.'],['有你在，哪裡都像春天。','With you, anywhere feels like spring.']]],
-開心:['開心,快樂,幸福,笑,歡',[['今天的光，剛好落在笑裡。','Today’s light lands just inside the smile.'],['把好心情，掛在{s}。','I hang my good mood {e}.'],['風都在笑，我也是。','Even the wind is laughing, and so am I.'],['在{s}，快樂剛剛好。','Joy is just right {e}.'],['心很輕，像要飛起來。','My heart is light, as if it could fly.'],['這一天，值得被好好記住。','This day deserves to be remembered.']]],
-懷舊:['懷舊,回憶,紀念,從前,復古,時光,那年',[['時光走遠了，{s}還亮著。','Time has walked far; the light still glows {e}.'],['把這一刻，存進{s}。','I store this moment {e}.'],['多年後再看，仍會微笑。','Years from now, I will still smile.'],['舊時光裡，有你也有我。','In old days, there was you and me.'],['那年的風，還記得我們。','The wind of that year still remembers us.'],['翻開記憶，{s}依然溫暖。','Opening memories, it is still warm {e}.']]],
-溫柔:['溫柔,暖,柔,輕,軟',[['在{s}，被溫柔輕輕接住。','{e}, gently held by tenderness.'],['慢慢來，{s}不趕。','Take your time; nothing rushes {e}.'],['願你，像光一樣安靜又溫暖。','May you be quiet and warm, like light.'],['世界很吵，你要溫柔。','The world is loud; stay gentle.'],['輕輕的，也是一種力量。','Gentleness is a kind of strength.'],['把今天，收進柔軟的時光。','I tuck today into soft time.']]],
-勇氣:['勇,自由,出發,冒險,夢,往前',[['站在{s}，世界忽然變大了。','Standing {e}, the world grows wider.'],['在{s}出發，一切都來得及。','Setting out {e}, it is never too late.'],['這裡不是終點，是開始。','This is not the end; it is the beginning.'],['往前一步，風景就不同。','One step ahead, and the view changes.'],['風很大，心很亮。','The wind is strong; the heart is bright.'],['告訴自己：我可以。','Tell yourself: I can.']]]
+傷感:['傷,難過,孤,想念,思念,失落,悲,哭,寂寞',[['有些想念，說不出口，只好留給風。','Some longing goes unsaid, so I leave it to the wind.'],['你不在的日子，光還是照常落下。','Light still falls the same on days you are gone.'],['把沒說完的話，折進這一張照片。','I fold the unfinished words into this photograph.'],['安靜不是不想念，只是不說。','Quiet does not mean no longing, only unspoken.'],['有些人，只能留在回憶的光裡。','Some people can only stay in the light of memory.'],['月光很輕，想念很重。','Moonlight is light; longing is heavy.']],'soft'],
+平靜:['靜,平靜,療癒,放鬆,慢',[['心慢下來，世界就變得很大。','When the heart slows down, the world grows wide.'],['不用趕路，今天只負責好好呼吸。','No need to hurry; today I only breathe.'],['風停了，心也落了地。','The wind stops; the heart touches ground.'],['平靜不是沒有風，是不再被吹動。','Calm is not the absence of wind, but no longer being moved by it.'],['把煩惱放遠一點，看見剛剛好的自己。','Set the worries far away, and meet the self that is just right.'],['靜靜站著，也是一種前進。','To stand still is also a way forward.']],'soft'],
+浪漫:['浪漫,愛,甜,戀,喜歡,情侶,夫妻,婚',[['光落在你肩上，我落在你眼裡。','Light falls on your shoulder; I fall into your eyes.'],['世界很大，你剛好在這。','The world is vast; you are just here.'],['有你在，哪裡都像春天。','With you, anywhere feels like spring.'],['想把今天的光，全都送給你。','I want to give you all of today’s light.'],['喜歡是藏不住的，像光一樣。','Love cannot be hidden, just like light.'],['牽著你，路就變得很短。','Holding your hand, the road grows short.']],'bright'],
+開心:['開心,快樂,幸福,笑,歡',[['今天的光，剛好落在笑裡。','Today’s light lands just inside the smile.'],['風都在笑，我也是。','Even the wind is laughing, and so am I.'],['心很輕，像要飛起來。','My heart is light, as if it could fly.'],['快樂是這樣的，不需要理由。','Happiness is like this: it needs no reason.'],['這一天，值得被好好記住。','This day deserves to be remembered.'],['把好心情，存進今天的照片。','I save today’s good mood in this photo.']],'bright'],
+懷舊:['懷舊,回憶,紀念,從前,復古,時光,那年',[['多年後再看，仍會微笑。','Years from now, I will still smile.'],['舊時光裡，有你也有我。','In old days, there was you and me.'],['那年的風，還記得我們。','The wind of that year still remembers us.'],['時間會走，這一刻會留下。','Time will go, but this moment will stay.'],['翻開記憶，一切都還亮著。','Opening the memories, everything still glows.'],['有些日子，過了才知道是光。','Some days only reveal themselves as light once they are gone.']],'soft'],
+溫柔:['溫柔,暖,柔,輕,軟',[['世界很吵，你要溫柔。','The world is loud; stay gentle.'],['輕輕的，也是一種力量。','Gentleness is a kind of strength.'],['慢慢來，一切都來得及。','Take it slowly; there is time for everything.'],['願你被世界溫柔以待。','May the world treat you gently.'],['把今天，收進柔軟的時光。','I tuck today into soft time.'],['你本身，就是一道溫柔的光。','You yourself are a gentle light.']],'soft'],
+勇氣:['勇,自由,出發,冒險,夢,往前',[['風很大，心很亮。','The wind is strong; the heart is bright.'],['這裡不是終點，是開始。','This is not the end; it is the beginning.'],['往前一步，風景就不同。','One step ahead, and the view changes.'],['告訴自己：我可以。','Tell yourself: I can.'],['怕也沒關係，先出發再說。','Fear is fine; set out first.'],['路還很長，但我已經在路上。','The road is long, but I am already on it.']],'bright']
+,俏皮:['俏皮,可愛,調皮,撒嬌,好玩',[['有你在，哪裡都順路。','With you, every road is on my way.'],['別動，讓我再多看你三秒。','Don’t move; let me look at you three more seconds.'],['今天的你，犯規了。','You are breaking the rules today.'],['說好只拍一張，結果停不下來。','We said just one photo, and now we can’t stop.'],['這個角度，只准我一個人看。','This angle is for my eyes only.'],['偷偷告訴你，今天的心情是你的顏色。','Secret: today’s mood is the color of you.']],'bright']
 };
+const CAP_SL={
+湖光裡:{soft:[['湖面很靜，把心事都映成了倒影。','The lake is still, turning every worry into a reflection.'],['漣漪一圈圈散開，像沒說出口的話。','Ripples spread in circles, like words left unsaid.']],bright:[['湖水藏著光，你藏著笑。','The lake hides light, and you hide a smile.'],['風輕輕一吹，湖就笑出了波紋。','A soft breeze, and the lake smiles in ripples.']]},
+潮聲裡:{soft:[['潮來潮去，把煩惱帶去很遠。','The tide comes and goes, carrying worries far away.'],['海那麼大，心事也顯得很小。','The sea is so vast that worries seem small.']],bright:[['海風有鹽，也有自由的味道。','The sea breeze tastes of salt, and of freedom.'],['浪聲替我說了，今天很開心。','The waves say for me: today is a happy one.']]},
+山風中:{soft:[['山很沉默，卻聽得見我的心事。','The mountain is silent, yet it hears my heart.'],['雲在腳下，煩惱也變小了。','Clouds below my feet, and worries grow small.']],bright:[['登高望遠，心也跟著開闊。','Climbing high, the heart opens wide too.'],['山風很大，我們很亮。','The mountain wind is strong, and we shine.']]},
+燈火裡:{soft:[['萬家燈火，有一盞是為我留的。','Among ten thousand lights, one is kept for me.'],['城市很吵，我只聽見自己。','The city is loud, yet I hear only myself.']],bright:[['夜色是底，我們是光。','Night is the canvas; we are the light.'],['燈火闌珊處，剛好遇見你。','Where the lights run low, I happen to meet you.']]},
+花影間:{soft:[['花開得很輕，像一段不敢驚動的回憶。','The flowers bloom so lightly, like a memory afraid to be disturbed.'],['花影搖晃，把思念也搖得很淺。','Flower shadows sway, rocking longing gently.']],bright:[['春天不遠，就在你笑的地方。','Spring is not far; it is wherever you smile.'],['花影之間，今天剛剛好。','Among the flower shadows, today is just right.']]},
+街角的光裡:{soft:[['街角的光很暖，像有人在等。','The light at the corner is warm, as if someone is waiting.'],['走過同一條街，心情已經不同。','The same street, a different heart.']],bright:[['轉角遇見光，也遇見今天的自己。','Turning the corner, I meet the light and today’s me.'],['平凡的街，因為有你而閃閃發亮。','An ordinary street, shining because you are here.']]},
+咖啡香裡:{soft:[['杯底還剩一點時光，沒有人催。','A little time is left in the cup, and no one is rushing.'],['咖啡慢慢涼了，思念卻慢慢熱了。','The coffee cools slowly, while longing warms.']],bright:[['一杯咖啡的時間，剛好夠說喜歡。','The time of one coffee is just enough to say I like you.'],['香氣裡，有今天的好心情。','In the aroma, there is today’s good mood.']]},
+暮色裡:{soft:[['天色慢慢暗下來，想念慢慢亮起來。','As the sky darkens, longing slowly lights up.'],['黃昏是一天最溫柔的告別。','Dusk is the gentlest goodbye of the day.']],bright:[['把今天的光，留給你。','I leave today’s light for you.'],['晚霞落在肩上，像你說話的溫度。','The sunset rests on my shoulder, like the warmth of your voice.']]},
+雪色中:{soft:[['雪落無聲，想念在掌心慢慢化開。','Snow falls silently, and longing melts in my palm.'],['世界白了，只剩你的名字有顏色。','The world turned white; only your name has color.']],bright:[['雪是冬天寫給世界的情書。','Snow is winter’s love letter to the world.'],['落在肩上的是雪，落在心上的是你。','Snow falls on my shoulder, and you fall in my heart.']]},
+林蔭裡:{soft:[['樹影斑駁，像時光留下的筆跡。','Dappled shade, like handwriting left by time.'],['林間很靜，足夠聽見心跳。','The woods are quiet enough to hear a heartbeat.']],bright:[['陽光穿過葉隙，落成今天的笑。','Sunlight through the leaves lands as today’s smile.'],['綠意很深，心情很淺，剛好。','Deep green, light mood, just right.']]},
+旅途中:{soft:[['一路向前，把回憶留在身後的風景。','Moving forward, leaving memories in the scenery behind.'],['遠方很遠，但心已經在路上。','The far away is far, but my heart is already on the road.']],bright:[['世界很大，我們慢慢走。','The world is wide; let us walk slowly.'],['每一步，都是新的風景。','Every step is a new view.']]},
+屋簷下:{soft:[['屋簷下的光很安靜，像一種安心。','The light under the eaves is quiet, like a kind of ease.'],['回到家，所有的疲憊都慢慢放下了。','Back home, all the weariness is slowly set down.']],bright:[['有你的地方，就是家。','Wherever you are is home.'],['日常很小，幸福很大。','Daily life is small; happiness is big.']]},
+雨聲裡:{soft:[['雨落下來，把思念洗得很清楚。','Rain falls, washing longing very clear.'],['雨聲很輕，剛好蓋過心事。','The rain is light, just enough to cover my thoughts.']],bright:[['下雨也好，有你就是晴天。','Rain is fine; with you it is sunny.'],['雨聲是今天的配樂。','The rain is today’s soundtrack.']]},
+風過處:{soft:[['風過了，把沒說的話吹得很遠。','The wind passes, carrying the unsaid far away.'],['風過處，留下一點淡淡的想念。','Where the wind passes, a faint longing remains.']],bright:[['風是自由的，我們也是。','The wind is free, and so are we.'],['風吹過來，帶著今天的好心情。','The wind arrives, carrying today’s good mood.']]}
+};
+const CAP_SM={
+潮聲裡:{傷感:[['潮水退了，有些名字卻留在沙上。','The tide withdraws, but some names stay in the sand.'],['海那麼大，還是裝不下一句沒說的話。','The sea is so vast, yet it cannot hold one unspoken sentence.']],平靜:[['浪一層一層來，心一層一層靜。','Wave after wave arrives, and the heart grows quieter layer by layer.'],['看海的時候，什麼都不必想。','Watching the sea, there is nothing I need to think about.']],浪漫:[['海風吹亂頭髮，也吹亂了心跳。','The sea breeze tangles my hair, and my heartbeat too.'],['想和你把這片海，看到天黑。','I want to watch this sea with you until dark.']],開心:[['腳印被浪帶走，笑聲留了下來。','The waves take the footprints, but the laughter stays.'],['今天的海，是為了我們藍的。','Today the sea is blue just for us.']],懷舊:[['同一片海，載著不同年紀的我們。','The same sea, carrying us at different ages.'],['浪聲還是那年的浪聲。','The waves sound just as they did that year.']],溫柔:[['海浪輕輕，像在說「沒關係」。','The waves are gentle, as if saying “it’s okay.”'],['潮聲很輕，像一句說了很多遍的晚安。','The tide is soft, like a goodnight said many times.']],勇氣:[['海那麼大，正好拿來出發。','The sea is so wide, just right for setting out.'],['浪撲上岸，又走回去，從不怕重來。','Waves rush ashore and return, never afraid to begin again.']],俏皮:[['說好看海，結果一直在看你。','We said we’d watch the sea, but I kept watching you.'],['海風說：這張照片，我也要入鏡。','The sea breeze says: I want to be in this photo too.']]},
+湖光裡:{傷感:[['湖面太靜，連心事都有了倒影。','The lake is so still that even my worries have reflections.'],['漣漪散開以後，什麼都沒有留下。','After the ripples spread, nothing is left behind.']],平靜:[['湖水不說話，我也不說話。','The lake says nothing, and neither do I.'],['天光雲影，慢慢地走進了湖裡。','Sky light and cloud shadows slowly wander into the lake.']],浪漫:[['湖面映著兩個人，也映著同一種心情。','The lake reflects two people, and the same feeling.'],['繞著湖走一圈，剛好夠說完喜歡。','One walk around the lake is just enough to say I like you.']],開心:[['風一吹，湖面全是笑出來的波紋。','When the wind blows, the whole lake smiles in ripples.'],['今天的湖，亮得像剛被擦過。','Today the lake is bright, as if freshly polished.']],懷舊:[['湖還是那個湖，只是我們都長大了。','The lake is still the same lake; only we have grown up.'],['水面倒映的，是很多年前的天空。','What the water reflects is the sky from years ago.']],溫柔:[['湖水輕輕晃，像替誰守著一個夢。','The lake sways gently, as if guarding someone’s dream.'],['水光很軟，連風都放慢了腳步。','The water glow is so soft that even the wind slows down.']],勇氣:[['湖水這麼靜，是為了接住下一次起飛。','The lake is so still to catch the next takeoff.'],['站在湖邊想通了：該走的路，就往前走。','Standing by the lake, I realize: the road to take is the one ahead.']],俏皮:[['湖面說：你比倒影好看。','The lake says: you look better than your reflection.'],['本來要拍風景，結果鏡頭自己轉向你。','I meant to shoot the scenery, but the camera turned to you by itself.']]},
+暮色裡:{傷感:[['夕陽落下的樣子，像一場很慢的告別。','The setting sun looks like a very slow goodbye.'],['天色暗了，思念卻剛剛亮起。','The sky darkens, just as longing lights up.']],平靜:[['一天的光，慢慢收進了暮色裡。','The day’s light is slowly gathered into the dusk.'],['不用急著說再見，夕陽也捨不得走。','No need to rush goodbye; even the sun is reluctant to leave.']],浪漫:[['晚霞是天空寫給你的情書。','The sunset is a love letter the sky wrote for you.'],['夕陽把你的側臉，鍍成了金色。','The sunset gilds your profile in gold.']],開心:[['滿天晚霞，都是今天的好心情。','The sunset sky is full of today’s good mood.'],['夕陽很好，你笑得更好。','The sunset is lovely, but your smile is lovelier.']],懷舊:[['同樣的夕陽，我們看過很多年。','The same sunset, watched for so many years.'],['黃昏的顏色，是回憶的顏色。','The color of dusk is the color of memory.']],溫柔:[['暮色很柔軟，把一整天的累都包住了。','The dusk is soft, wrapping up all the day’s weariness.'],['夕陽輕輕落在肩上，像一句晚安。','The sunset rests on my shoulder like a goodnight.']],勇氣:[['太陽會落下，也會再升起。','The sun sets, and it will rise again.'],['天黑之前，再往前走一段。','Before dark falls, walk a little further.']],俏皮:[['夕陽說：今天的主角讓給你。','The sunset says: the lead role today is yours.'],['光線剛好，快拍，不然太陽要反悔了。','The light is perfect; shoot now, before the sun changes its mind.']]},
+燈火裡:{傷感:[['城市很亮，卻沒有一盞是為我留的。','The city is bright, yet no light is kept for me.'],['夜越深，想念越清楚。','The deeper the night, the clearer the longing.']],平靜:[['燈火一盞一盞亮起，心一點一點安靜。','Lights come on one by one, and the heart quiets bit by bit.'],['夜晚是一天裡，最誠實的時間。','Night is the most honest hour of the day.']],浪漫:[['滿城燈火，我只看見你眼裡的光。','Amid a city of lights, I only see the light in your eyes.'],['夜色很深，剛好藏得住喜歡。','The night is deep enough to hide how much I like you.']],開心:[['今晚的城市，是為我們亮的。','The city tonight is lit for us.'],['夜還很長，快樂還沒打烊。','The night is young and the joy hasn’t closed yet.']],懷舊:[['這城市的夜，我們一起走過很多次。','We have walked this city’s nights together many times.'],['燈火還在，只是當年的人走散了。','The lights remain, but the people of that year have drifted apart.']],溫柔:[['夜很深，還好有燈替你照著路。','The night is deep, but thankfully a light shows the way.'],['城市睡了，只剩晚風溫柔地醒著。','The city sleeps; only the evening breeze stays gently awake.']],勇氣:[['越是夜裡，越要自己發光。','The darker the night, the more you must shine yourself.'],['穿過這片燈火，前面就是新的一天。','Past these lights lies a new day.']],俏皮:[['夜景很美，但你比霓虹更犯規。','The night view is beautiful, but you break the rules more than the neon does.'],['今晚的燈，都是來陪襯你的。','Tonight’s lights are all here just to set you off.']]},
+山風中:{傷感:[['山那麼高，還是擋不住一點想念。','The mountains are so high, yet they cannot block a little longing.'],['雲散了，話卻留在山谷裡。','The clouds scatter, but the words stay in the valley.']],平靜:[['山不說話，卻讓人安靜下來。','The mountain says nothing, yet it quiets everyone.'],['雲在山腰慢慢走，我也慢慢走。','Clouds drift along the slope, and I walk slowly too.']],浪漫:[['想和你站到山頂，把風景看遍。','I want to stand at the summit with you and see every view.'],['山風很大，你的手很暖。','The mountain wind is strong; your hand is warm.']],開心:[['一口氣爬上來，風景都是獎勵。','I climbed all the way up, and the view is the reward.'],['站在山上大喊，快樂傳了好遠。','Shouting from the mountain, my joy travels far.']],懷舊:[['這條山路，我們走過的不只一次。','This mountain path is one we have walked more than once.'],['山還在，當年的少年已經長大。','The mountain remains; the youth of that year has grown up.']],溫柔:[['山把雲抱在懷裡，像在哄誰入睡。','The mountain holds the clouds as if lulling someone to sleep.'],['風從山那邊來，帶著一點溫柔。','The wind comes from beyond the mountain, carrying a little tenderness.']],勇氣:[['山就在那裡，一步一步就到了。','The mountain is right there, and step by step you arrive.'],['爬得越高，越看清楚自己要去哪。','The higher you climb, the clearer where you are going.']],俏皮:[['爬到這裡，就是為了拍這一張。','I climbed all the way here just to take this photo.'],['山風說：今天你的髮型，我負責。','The mountain wind says: I’m in charge of your hair today.']]},
+花影間:{傷感:[['花開得再好，也有人看不見。','However well the flowers bloom, someone cannot see them.'],['落花不語，像一段沒說完的故事。','Falling petals say nothing, like an unfinished story.']],平靜:[['花影在地上輕輕晃，時間也跟著慢了。','Flower shadows sway on the ground, and time slows with them.'],['在花旁坐一會兒，什麼煩惱都淡了。','Sitting by the flowers a while, every worry fades.']],浪漫:[['花是春天的話，說給喜歡的人聽。','Flowers are spring’s words, told to the one it loves.'],['你站在花裡，我分不清哪朵是你。','Standing among the flowers, I can’t tell which bloom is you.']],開心:[['滿園的花，都在替你鼓掌。','The whole garden of flowers is applauding for you.'],['花開了，好心情也跟著開了。','The flowers have opened, and so has my good mood.']],懷舊:[['年年花開，年年都有人想起從前。','Each year the flowers bloom, and each year someone remembers the past.'],['花還是那年的花，人是今年的人。','The flowers are those of that year; the people are of this year.']],溫柔:[['花瓣很輕，像一個沒有重量的擁抱。','Petals are light, like a hug with no weight.'],['被花圍著，連風都變得很小聲。','Surrounded by flowers, even the wind lowers its voice.']],勇氣:[['花不急，該開的時候自然會開。','Flowers don’t rush; they bloom when it’s time.'],['風雨過後，花開得更用力。','After the wind and rain, the flowers bloom even harder.']],俏皮:[['花說：今天的主角不是我。','The flowers say: I’m not today’s star.'],['人比花嬌，這句是真的。','“People are lovelier than flowers”: this time it’s true.']]},
+咖啡香裡:{傷感:[['咖啡苦了，才發現糖早就用完。','The coffee turned bitter, and I found the sugar was gone long ago.'],['對面的位子，今天沒有人。','The seat across from me is empty today.']],平靜:[['窗邊一杯咖啡，午後剛剛好。','A cup of coffee by the window; the afternoon is just right.'],['杯裡的熱氣，一圈一圈散去煩惱。','The steam from the cup circles away my worries.']],浪漫:[['一杯咖啡的時間，剛好夠看你很久。','The time of one coffee is just enough to look at you for a long while.'],['咖啡很香，但你比較讓人上癮。','The coffee smells good, but you are more addictive.']],開心:[['好咖啡配好心情，今天滿分。','Good coffee with a good mood: full marks today.'],['杯子見底，笑容還沒有。','The cup is empty, but the smile isn’t.']],懷舊:[['這間咖啡館，藏了我們很多話。','This café holds many of our words.'],['咖啡的香氣，是那些午後的回音。','The aroma of coffee is the echo of those afternoons.']],溫柔:[['熱咖啡捧在手心，像被輕輕抱著。','Holding a hot coffee, it feels like being gently embraced.'],['午後的光落進杯裡，也落進心裡。','The afternoon light falls into the cup, and into the heart.']],勇氣:[['喝完這杯，就去做那件一直想做的事。','After this cup, I’ll go do the thing I’ve always wanted to do.'],['咖啡讓人清醒，也讓人下定決心。','Coffee wakes you up, and helps you make up your mind.']],俏皮:[['咖啡可以續杯，你是限量款。','The coffee comes with refills; you are limited edition.'],['說好只喝一杯，結果坐了一下午。','I said just one cup, and sat there all afternoon.']]},
+雪色中:{傷感:[['雪蓋住了腳印，也蓋住了一些話。','Snow covers the footprints, and some words too.'],['世界這麼白，才看清心裡的空。','The world is so white that the emptiness inside shows clearly.']],平靜:[['雪落下來，連聲音都變得很輕。','As snow falls, even sounds grow light.'],['一片白，剛好讓心也空一空。','An expanse of white, just right for emptying the heart too.']],浪漫:[['想和你在雪裡，走到白頭。','I want to walk with you in the snow until our hair turns white.'],['雪落在你睫毛上，我心動了一下。','Snow lands on your lashes, and my heart skips.']],開心:[['第一場雪，笑得特別大聲。','The first snow, and I laughed especially loud.'],['雪地裡的腳印，一串一串都是開心。','The footprints in the snow, string after string of happiness.']],懷舊:[['每一年的雪，都會想起那一年。','Every year’s snow reminds me of that year.'],['雪還是那樣白，只是身邊的人不同了。','The snow is just as white, but the people beside me are different.']],溫柔:[['雪很輕，像天空寫給大地的一封信。','The snow is light, like a letter the sky writes to the earth.'],['在雪裡，連呼吸都變得很溫柔。','In the snow, even breathing becomes gentle.']],勇氣:[['雪再大，路還是要自己走出來。','However heavy the snow, you still have to walk your own path.'],['踩下去的第一步，就是新的方向。','The first step you press down is a new direction.']],俏皮:[['雪說：別動，我來幫你弄頭髮。','The snow says: don’t move, I’ll do your hair.'],['這麼冷，只有你是暖的。','It’s so cold, and only you are warm.']]}
+};
+const CAP_POEMS=[
+['湖光秋月兩相和，潭面無風鏡未磨。','Lake light and autumn moon blend as one; the pool is a mirror not yet polished.','劉禹錫〈望洞庭〉','湖光裡'],
+['水光瀲灩晴方好，山色空濛雨亦奇。','Sparkling water is lovely in sun; misty mountains are wondrous in rain.','蘇軾〈飲湖上初晴後雨〉','湖光裡,山風中'],
+['春江潮水連海平，海上明月共潮生。','The spring river meets the sea; a bright moon rises with the tide.','張若虛〈春江花月夜〉','潮聲裡'],
+['海日生殘夜，江春入舊年。','The sea sun rises from the last of night; spring enters the old year on the river.','王灣〈次北固山下〉','潮聲裡'],
+['行到水窮處，坐看雲起時。','I walk to where the water ends, then sit and watch the clouds rise.','王維〈終南別業〉','山風中'],
+['明月松間照，清泉石上流。','Bright moon through the pines; a clear spring over the stones.','王維〈山居秋暝〉','林蔭裡,山風中'],
+['一道殘陽鋪水中，半江瑟瑟半江紅。','A last ray of sun spreads on the water; half the river green, half red.','白居易〈暮江吟〉','暮色裡'],
+['孤舟蓑笠翁，獨釣寒江雪。','A lone boat, a straw-cloaked old man, fishing alone in the cold river snow.','柳宗元〈江雪〉','雪色中'],
+['隨風潛入夜，潤物細無聲。','Following the wind it slips into the night, moistening all things without a sound.','杜甫〈春夜喜雨〉','雨聲裡'],
+['莫聽穿林打葉聲，何妨吟嘯且徐行。','Pay no mind to the rain beating the leaves; why not stroll on, whistling.','蘇軾〈定風波〉','雨聲裡,旅途中'],
+['知否，知否？應是綠肥紅瘦。','Do you know? The green grows full while the red grows thin.','李清照〈如夢令〉','花影間'],
+['山一程，水一程，身向榆關那畔行。','One mountain pass, then one river crossing, heading toward the frontier.','納蘭性德〈長相思〉','旅途中'],
+['野曠天低樹，江清月近人。','The wilds are wide, the sky low over the trees; the river clear, the moon close to me.','孟浩然〈宿建德江〉','湖光裡,燈火裡'],
+['人間有味是清歡。','In this world, the sweetest taste is a quiet, simple joy.','蘇軾〈浣溪沙〉','*'],
+['回首向來蕭瑟處，歸去，也無風雨也無晴。','Looking back at the bleak path, I go home: no wind or rain, nor clear skies.','蘇軾〈定風波〉','*']
+];
 let capPool=[],capIdx=0,capCur=null,capSig='',capEdited=false;
 const capHas=(al,k)=>al.split(',').some(a=>k.includes(a));
 function capBuild(keys){
-  let sc=CAP_SCENES.filter(s=>capHas(s[0],keys)).map(s=>[s[1],s[2]]);
-  if(!sc.length)sc=[['此刻','in this moment']];
-  const md=Object.values(CAP_MOODS).filter(m=>capHas(m[0],keys));
-  const use=md.length?md:[CAP_MOODS['溫柔'],CAP_MOODS['平靜']];
-  const seen=new Set(),out=[];
-  use.forEach(m=>m[1].forEach(t=>sc.forEach(s=>{
-    const zh=t[0].replace(/\{s\}/g,s[0]);
-    if(seen.has(zh))return;seen.add(zh);
-    const en=t[1].replace(/\{e\}/g,s[1]);
-    out.push([zh,en.charAt(0).toUpperCase()+en.slice(1)]);
-  })));
-  for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]];}
-  return out;
+  const sc=CAP_SCENES.filter(s=>capHas(s[0],keys)).map(s=>s[1]);
+  const mix=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+  const seen=new Set(),A=[],B=[];
+  const add=(l,to)=>{if(!seen.has(l[0])){seen.add(l[0]);to.push(l);}};
+  if($('#capSrc').value==='poem'){
+    CAP_POEMS.forEach(p=>{
+      const tag=p[3];
+      if(tag==='*')add(p,B);
+      else if(sc.some(id=>tag.split(',').includes(id)))add(p,A);
+      else if(!sc.length)add(p,B);
+    });
+    return [...mix(A),...mix(B)];
+  }
+  const ent=Object.entries(CAP_MOODS).filter(([n,m])=>capHas(m[0],keys));
+  const use=ent.length?ent:[['溫柔',CAP_MOODS['溫柔']],['平靜',CAP_MOODS['平靜']]];
+  const done=new Set();
+  sc.forEach(id=>use.forEach(([n])=>{const l=(CAP_SM[id]||{})[n];if(l){l.forEach(x=>add(x,A));done.add(id+n);}}));
+  sc.forEach(id=>use.forEach(([n,m])=>{if(!done.has(id+n))((CAP_SL[id]||{})[m[2]]||[]).forEach(x=>add(x,A));}));
+  use.forEach(([n,m])=>m[1].forEach(x=>add(x,B)));
+  return [...mix(A),...mix(B)];
 }
 function capTextFor(c){const l=$('#capLang').value;return l==='zh'?c[0]:l==='en'?c[1]:c[0]+'\n'+c[1];}
 function capRender(){
   const box=$('#capShow');box.textContent=capCur[0];
-  const sm=document.createElement('small');sm.textContent=capCur[1]+'　·　不喜歡就再點一次';box.appendChild(sm);
+  const sm=document.createElement('small');sm.textContent=(capCur[2]||capCur[1])+'　·　不喜歡就再點一次';box.appendChild(sm);
   $('#capText').value=capTextFor(capCur);
   $('#capGen').textContent='換一句';
 }
 function capNext(){
-  const keys=$('#capKeys').value.trim();
-  if(keys!==capSig||capIdx>=capPool.length){capPool=capBuild(keys);capIdx=0;capSig=keys;if(capCur&&capPool.length>1&&capPool[0][0]===capCur[0])capPool.push(capPool.shift());}
+  const keys=$('#capKeys').value.trim(),sig=keys+'|'+$('#capSrc').value;
+  if(sig!==capSig||capIdx>=capPool.length){
+    capPool=capBuild(keys);capIdx=0;capSig=sig;
+    if(capCur&&capPool.length>1&&capPool[0][0]===capCur[0])capPool.push(capPool.shift());
+  }
   capCur=capPool[capIdx++];capEdited=false;capRender();onChange();
 }
+function capSyncSrc(){$$('.segbtn').forEach(b=>b.classList.toggle('on',b.dataset.src===$('#capSrc').value));}
 function capSyncChips(){const k=$('#capKeys').value;$$('.chip').forEach(c=>c.classList.toggle('on',k.includes(c.textContent)));}
 function capLines(){
   if(!$('#capOn').checked)return [];
@@ -987,9 +1124,9 @@ function capLines(){
 function capReset(){
   $('#capOn').checked=false;$('#capBody').hidden=true;$('#capKeys').value='';$('#capText').value='';
   capCur=null;capPool=[];capSig='';capEdited=false;$('#capGen').textContent='想一句';
-  $('#capShow').textContent='點「想一句」，這裡會出現文字';capSyncChips();
+  $('#capShow').textContent='點「想一句」，這裡會出現文字';$('#capSrc').value='orig';capSyncSrc();capSyncChips();
 }
-[['#capChipsP',['湖邊','海邊','山','夜景','花','街角','咖啡館','夕陽','雪','森林','雨','旅途']],['#capChipsM',['傷感','平靜','浪漫','開心','懷舊','溫柔','勇氣']]].forEach(([id,arr])=>{
+[['#capChipsP',['湖邊','海邊','山景','夜景','花園','街角','咖啡','夕陽','雪景','森林','雨天','旅途']],['#capChipsM',['傷感','平靜','浪漫','開心','懷舊','溫柔','勇氣','俏皮']]].forEach(([id,arr])=>{
   arr.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t;
     b.addEventListener('click',()=>{const ks=$('#capKeys').value.split(/[、,，\s]+/).filter(Boolean);const i=ks.indexOf(t);i<0?ks.push(t):ks.splice(i,1);$('#capKeys').value=ks.join('、');capSyncChips();});
     $(id).appendChild(b);});
@@ -997,6 +1134,7 @@ function capReset(){
 $('#capOn').addEventListener('change',()=>{$('#capBody').hidden=!$('#capOn').checked;});
 $('#capKeys').addEventListener('input',capSyncChips);
 $('#capGen').addEventListener('click',capNext);
+$$('.segbtn').forEach(b=>b.addEventListener('click',()=>{$('#capSrc').value=b.dataset.src;capSyncSrc();capSig='';}));
 $('#capText').addEventListener('input',()=>{capEdited=true;onChange();});
 $('#capLang').addEventListener('change',()=>{if(capCur&&!capEdited){$('#capText').value=capTextFor(capCur);}onChange();});
 ['#reset','#stickyReset'].forEach(s=>$(s).addEventListener('click',()=>{capReset();buildPrompt();$('#status').textContent='已重設為預設';}));
@@ -1005,15 +1143,16 @@ $('#capLang').addEventListener('change',()=>{if(capCur&&!capEdited){$('#capText'
 const MINE_KEY='fantu_my_presets_v1';
 const mineLoad=()=>{try{return JSON.parse(localStorage.getItem(MINE_KEY)||'{}')}catch(e){return {}}};
 const mineStore=o=>{try{localStorage.setItem(MINE_KEY,JSON.stringify(o));return true}catch(e){return false}};
-const mineFields=()=>$$('input,select,textarea').filter(el=>el.id!=='output'&&el.id!=='autoUpdate'&&(el.id||el.name));
+const mineFields=()=>$$('input,select,textarea').filter(el=>el.id!=='output'&&el.id!=='autoUpdate'&&el.id!=='advMode'&&(el.id||el.name));
 const mineKey=el=>el.id||el.name+'|'+el.value;
 const mineIsBox=el=>el.type==='checkbox'||el.type==='radio';
 function mineApply(o){
   mineFields().forEach(el=>{const k=mineKey(el);if(!(k in o))return;if(mineIsBox(el))el.checked=!!o[k];else el.value=o[k];});
-  $('#capBody').hidden=!$('#capOn').checked;capSyncChips();$('#wmBody').hidden=!$('#wmOn').checked;wmSave();
+  $('#capBody').hidden=!$('#capOn').checked;capSyncChips();$('#wmBody').hidden=!$('#wmOn').checked;wmSave();capSyncSrc();
   capCur=null;capPool=[];capSig='';capEdited=true;$('#capGen').textContent='想一句';
   $('#capShow').textContent=$('#capText').value||'點「想一句」，這裡會出現文字';
   $$('.pill').forEach(p=>p.classList.remove('active'));
+  enforceAll();
   buildPrompt();
 }
 function mineRender(){
@@ -1059,6 +1198,84 @@ WM_IDS.forEach(i=>['input','change'].forEach(ev=>$('#'+i).addEventListener(ev,()
 ['#reset','#stickyReset'].forEach(s=>$(s).addEventListener('click',()=>{wmReset();buildPrompt();}));
 wmLoad();
 
+/* ===== 選項限制：限選群組與對立組（進階模式可解除）===== */
+const ORIG = {
+  shared: ['/exposure','/brighten','/whitebalance','/hires','/cinematic','/film','/bokeh','/removeobject','/extend','/remove_specific','/changebg','/colorgrade','/perspective','/unify','/denoise','/backlight'],
+  body: ['/slimbody','/fixwaist','/waistline','/flattummy','/flatclothes','/longlegs','/taller','/fixlegs','/fixarms','/headbody','/fixposture','/fixshoulder','/fixclothes','/fixhands']
+};
+function pickOrig(name, i) {
+  const x = document.querySelector(`input[name="${name}"][value="${ORIG[name][i]}"]`);
+  if (x) x.checked = true;
+}
+const advOn = () => $('#advMode').checked;
+const V = v => `input[value="${v}"]`;
+const OPP = [
+  [['#keep_hair'], [V('/female_hair')]],
+  [[V('/hires')], [V('/dreamlight')]],
+  [[V('/denoise')], [V('/filmgrain')]],
+  [[V('/female_lines')], ['/female_nasolabial','/female_frown','/female_forehead','/female_eyelines'].map(V)],
+  [[V('/male_lines')], ['/male_nasolabial','/male_frown','/male_forehead','/male_eyelines'].map(V)]
+];
+const oppSide = a => a.flatMap(q => $$(q));
+const optName = el => el.closest('label').querySelector('span').childNodes[0].textContent.trim();
+let toastT;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2800);
+}
+function oneChanged(el) {
+  if (advOn() || !el.checked) return;
+  el.dataset.t = Date.now();
+  const msgs = [];
+  const g = el.closest('.ogroup');
+  if (g && +g.dataset.max > 0) {
+    const on = [...g.querySelectorAll('input:checked')];
+    while (on.length > +g.dataset.max) {
+      const old = on.filter(x => x !== el).sort((a, b) => (+a.dataset.t || 0) - (+b.dataset.t || 0))[0];
+      old.checked = false; on.splice(on.indexOf(old), 1); msgs.push('取消「' + optName(old) + '」');
+    }
+  }
+  OPP.forEach(([A, B]) => {
+    const a = oppSide(A), b = oppSide(B);
+    const other = a.includes(el) ? b : b.includes(el) ? a : null;
+    if (other) other.filter(x => x.checked).forEach(x => { x.checked = false; msgs.push('取消「' + optName(x) + '」（目的相反）'); });
+  });
+  if (el.value === '/changebg' && $('#sceneChoice').value) { $('#sceneChoice').value = ''; msgs.push('場景改為不選'); }
+  if (msgs.length) { toast('已選「' + optName(el) + '」，' + msgs.join('、')); buildPrompt(); }
+}
+function enforceAll() {
+  if (advOn()) return false;
+  let n = 0; const names = [];
+  $$('.ogroup').forEach(g => {
+    const mx = +g.dataset.max; if (!mx) return;
+    [...g.querySelectorAll('input:checked')].slice(mx).forEach(x => { x.checked = false; n++; names.push(optName(x)); });
+  });
+  OPP.forEach(([A, B]) => {
+    const a = oppSide(A), b = oppSide(B);
+    if (a.some(x => x.checked) && b.some(x => x.checked)) b.filter(x => x.checked).forEach(x => { x.checked = false; n++; names.push(optName(x)); });
+  });
+  if (n) toast('預設已自動精簡：' + names.slice(0, 3).join('、') + (names.length > 3 ? '…' : ''));
+  return n > 0;
+}
+function gmaxRefresh() {
+  $$('.ogroup').forEach(g => {
+    const mx = +g.dataset.max, b = g.querySelector('.gmax');
+    b.textContent = mx === 0 ? '可複選' : advOn() ? '不限' : '最多選 ' + mx;
+  });
+}
+document.addEventListener('change', e => { if (e.target.matches && e.target.matches('input[type=checkbox]') && e.target.id !== 'advMode') oneChanged(e.target); });
+$('#sceneChoice').addEventListener('change', () => {
+  const c = document.querySelector(V('/changebg'));
+  if ($('#sceneChoice').value && !advOn() && c && c.checked) { c.checked = false; toast('已取消「更換背景」，改用你選的場景'); buildPrompt(); }
+});
+try { $('#advMode').checked = localStorage.getItem('fantu_adv') === '1'; } catch (e) {}
+$('#advMode').addEventListener('change', () => {
+  try { localStorage.setItem('fantu_adv', advOn() ? '1' : '0'); } catch (e) {}
+  gmaxRefresh();
+  if (!advOn() && enforceAll()) buildPrompt();
+});
+gmaxRefresh();
+
 syncPlatformOptions();
 buildPrompt();
 </script>
@@ -1096,5 +1313,6 @@ h.addEventListener('pointerleave',()=>{w.style.setProperty('--rx','0deg');w.styl
 s.addEventListener('click',()=>{w.classList.remove('burst');void w.offsetWidth;w.classList.add('burst')});
 })();
 </script>
+<div id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
