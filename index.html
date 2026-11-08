@@ -8,7 +8,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC&display=swap" rel="stylesheet">
-<title>凡圖百鍊生｜AI 人像精修短指令工具 v1.0</title>
+<title>凡圖百鍊生｜AI 修圖短指令工具（人像・商品）</title>
+<meta name="description" content="用選的就能產生 AI 修圖短指令：人像精修、特效場景、加字署名，以及商品情境圖（串珠、飾品）。不上傳照片，複製指令貼給 ChatGPT 或 Gemini 即可。">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:title" content="凡圖百鍊生｜AI 修圖短指令工具">
+<meta property="og:description" content="點選項目，自動產生 AI 修圖短指令。人像精修、商品情境圖都能用，不上傳照片。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23d8b46b'/%3E%3Ccircle cx='32' cy='32' r='24' fill='%23140f0a'/%3E%3Ctext x='32' y='43' font-size='30' text-anchor='middle' fill='%23f8e9b9' font-family='serif'%3E凡%3C/text%3E%3C/svg%3E">
 <style>
 @property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
 :root{--bg:#f3ede2;--paper:#fffdf9;--ink:#26231c;--muted:#7b7566;--line:#e4dac8;--accent:#8a6a2b;--accent2:#f1e6cf;--green:#3c6b52;--gold1:#f8e9b9;--gold2:#d8b46b;--gold3:#a87c2c;--night:#14110c;--safe-bottom:env(safe-area-inset-bottom,0px);--kai:"LXGW WenKai TC","DFKai-SB","標楷體",serif}
@@ -161,6 +167,19 @@ textarea{resize:vertical}
 #toast{position:fixed;left:50%;bottom:calc(92px + var(--safe-bottom));transform:translate(-50%,10px);max-width:88vw;padding:9px 16px;border-radius:12px;background:rgba(20,17,12,.94);color:#f2e8d0;border:1px solid rgba(216,180,107,.5);font-size:12.5px;line-height:1.5;text-align:center;opacity:0;pointer-events:none;transition:.25s;z-index:200}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 @media(min-width:640px){#toast{bottom:24px}}
+.modebar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.modebtn{padding:13px 8px;border-radius:14px;border:1px solid #d9cdb6;background:#fbf6ea;color:#5d4c30;font:400 16px var(--kai);letter-spacing:.12em;cursor:pointer;transition:.2s;-webkit-tap-highlight-color:transparent}
+.modebtn:active{transform:scale(.97)}
+.modebtn.on{background:linear-gradient(135deg,#f6e3a6,#d6b062 50%,#b98c3a);border-color:#9b7228;color:#2a1f0c;box-shadow:0 8px 18px -10px rgba(150,105,30,.9),inset 0 1px 0 rgba(255,255,255,.6)}
+.only-product{display:none!important}
+.mode-product .only-person{display:none!important}
+.mode-product .presets.grid.only-product{display:grid!important}
+.mode-product .pgroup.only-product{display:block!important}
+.mode-product .tab-btn.only-product{display:inline-block!important}
+.mode-product span.only-product{display:inline!important}
+.presets.grid.c4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.mode-product #panel1 .fields{grid-template-columns:1fr}
+.tabs:has(#prodBTabBtn.active)::before{transform:translateX(100%)}
   .pill .x{margin-left:8px;padding:0 2px;opacity:.55;font-weight:700}
 .pill.mine{display:inline-flex;align-items:center}
 @media(max-width:560px){.fields{grid-template-columns:1fr}.options{gap:6px}.panel{padding:14px 11px 12px}.opt{font-size:12.5px}.opt .cmd{font-size:10px}}
@@ -169,6 +188,7 @@ textarea{resize:vertical}
 </style>
 </head>
 <body>
+<noscript><p style="padding:24px;text-align:center">此工具需要啟用 JavaScript 才能使用。</p></noscript>
 <main class="wrap">
 
 <header class="hero" id="hero">
@@ -180,12 +200,13 @@ textarea{resize:vertical}
   <p class="tagline">千錘百鍊，只為留下更美好的模樣。</p>
   <div class="sub">短指令版 · v1.0 百鍊整合版 · 選中文 · 輸出短指令</div>
 </header>
+<div class="modebar" role="tablist" aria-label="模式"><button type="button" class="modebtn on" id="modePortrait" data-mode="person">人像修圖</button><button type="button" class="modebtn" id="modeProduct" data-mode="product">商品情境</button></div>
 
 <!-- 快速預設 -->
 <section class="panel">
   <h2><span class="num">0</span>快速預設</h2>
-  <div class="pgroup">人物</div>
-  <div class="presets grid">
+  <div class="pgroup only-person">人物</div>
+  <div class="presets grid only-person">
     <button type="button" class="pill" data-preset="couple">夫妻自然</button>
     <button type="button" class="pill" data-preset="family">家庭合照</button>
     <button type="button" class="pill" data-preset="male">單人男性</button>
@@ -193,8 +214,8 @@ textarea{resize:vertical}
     <button type="button" class="pill" data-preset="love">情侶紀念</button>
     <button type="button" class="pill" data-preset="daily">生活日常</button>
   </div>
-  <div class="pgroup">場景氛圍</div>
-  <div class="presets grid">
+  <div class="pgroup only-person">場景氛圍</div>
+  <div class="presets grid only-person">
     <button type="button" class="pill" data-preset="travel">旅遊人像</button>
     <button type="button" class="pill" data-preset="golden">金色夕陽</button>
     <button type="button" class="pill" data-preset="night">夜景燈火</button>
@@ -202,8 +223,8 @@ textarea{resize:vertical}
     <button type="button" class="pill" data-preset="jpclear">日系清透</button>
     <button type="button" class="pill" data-preset="retro">復古底片</button>
   </div>
-  <div class="pgroup">攝影師 · 常用場景</div>
-  <div class="presets grid">
+  <div class="pgroup only-person">攝影師 · 常用場景</div>
+  <div class="presets grid only-person">
     <button type="button" class="pill" data-preset="ceremony">婚禮儀式</button>
     <button type="button" class="pill" data-preset="wedshoot">婚紗側拍</button>
     <button type="button" class="pill" data-preset="banquet">家宴聚餐</button>
@@ -214,11 +235,22 @@ textarea{resize:vertical}
     <button type="button" class="pill" data-preset="outdoor">外拍寫真</button>
     <button type="button" class="pill" data-preset="event">活動紀錄</button>
   </div>
-  <div class="pgroup">工具</div>
-  <div class="presets grid">
+  <div class="pgroup only-person">工具</div>
+  <div class="presets grid only-person">
     <button type="button" class="pill" data-preset="restore">清晰補救</button>
     <button type="button" class="pill" data-preset="lowlight">低光補救</button>
     <button type="button" class="pill" data-preset="clear">清空</button>
+  </div>
+    <div class="pgroup only-product">商品情境</div>
+  <div class="presets grid c4 only-product">
+    <button type="button" class="pill" data-preset="pmarble">蝦皮情境</button>
+    <button type="button" class="pill" data-preset="plinen">溫潤亞麻</button>
+    <button type="button" class="pill" data-preset="pvelvet">綠絨礦石</button>
+    <button type="button" class="pill" data-preset="pwalnut">胡桃質感</button>
+    <button type="button" class="pill" data-preset="pslate">板岩沉穩</button>
+    <button type="button" class="pill" data-preset="pwear">手戴情境</button>
+    <button type="button" class="pill" data-preset="pstory">限動版面</button>
+    <button type="button" class="pill" data-preset="pwhite">白底淨修</button>
   </div>
   <div class="subhead">我的預設</div>
   <div class="presets grid" id="myPresets"></div>
@@ -227,8 +259,8 @@ textarea{resize:vertical}
 </section>
 
 <!-- 1 基礎 -->
-<section class="panel">
-  <h2><span class="num">1</span>平台 · 類型 · 風格</h2>
+<section class="panel" id="panel1">
+  <h2><span class="num">1</span><span class="only-person">平台 · 類型 · 風格</span><span class="only-product">平台</span></h2>
   <div class="fields">
     <div class="field">
       <label for="platform">平台</label>
@@ -238,7 +270,7 @@ textarea{resize:vertical}
         <option value="gemini">Gemini</option>
       </select>
     </div>
-    <div class="field">
+    <div class="field only-person">
       <label for="photoType">照片類型</label>
       <select id="photoType">
         <option value="couple">夫妻／情侶</option>
@@ -250,7 +282,7 @@ textarea{resize:vertical}
         <option value="life">生活照</option>
       </select>
     </div>
-    <div class="field">
+    <div class="field only-person">
       <label for="style">風格</label>
       <select id="style">
         <option value="natural">自然耐看</option>
@@ -265,7 +297,7 @@ textarea{resize:vertical}
         <option value="bright">清爽明亮</option>
       </select>
     </div>
-    <div class="field">
+    <div class="field only-person">
       <label for="intensity">強度</label>
       <select id="intensity">
         <option value="light">輕度自然</option>
@@ -277,8 +309,10 @@ textarea{resize:vertical}
 </section>
 
 <nav class="tabs" role="tablist" aria-label="編輯功能分頁">
-  <button type="button" class="tab-btn active" id="personTabBtn" role="tab" aria-selected="true" aria-controls="personTab">人物修改</button>
-  <button type="button" class="tab-btn" id="sceneTabBtn" role="tab" aria-selected="false" aria-controls="sceneTab">特效／場景</button>
+  <button type="button" class="tab-btn only-person active" id="personTabBtn" role="tab" aria-selected="true" aria-controls="personTab">人物修改</button>
+  <button type="button" class="tab-btn only-person" id="sceneTabBtn" role="tab" aria-selected="false" aria-controls="sceneTab">特效／場景</button>
+  <button type="button" class="tab-btn only-product" id="prodATabBtn" role="tab" aria-selected="false" aria-controls="prodATab">商品材質</button>
+  <button type="button" class="tab-btn only-product" id="prodBTabBtn" role="tab" aria-selected="false" aria-controls="prodBTab">情境光線</button>
   <button type="button" class="tab-btn" id="textTabBtn" role="tab" aria-selected="false" aria-controls="textTab">文字點睛</button>
 </nav>
 <div id="personTab" class="tab-panel" role="tabpanel" aria-labelledby="personTabBtn">
@@ -468,6 +502,118 @@ textarea{resize:vertical}
 </div>
 
 
+<div id="prodATab" class="tab-panel" role="tabpanel" aria-labelledby="prodATabBtn" hidden>
+<!-- 2 商品與材質 -->
+<section class="panel">
+  <h2><span class="num">2</span>商品與材質 <span class="hint">材質最多選 5 種，不確定就不選</span></h2>
+  <div class="field">
+    <label for="pCat">商品品類</label>
+    <select id="pCat"><option value="bracelet">手串／手鍊</option><option value="necklace">項鍊</option><option value="earrings">耳環</option><option value="ring">戒指</option></select>
+  </div>
+  <div class="groups" id="matOpts" style="margin-top:14px">
+    <div class="ogroup" data-max="5"><div class="ghead"><span>材質</span><span class="gmax">最多選 5</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_clear"><span>透明水晶<span class="cmd">/m_clear</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_crackle"><span>爆花水晶<span class="cmd">/m_crackle</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_amethyst"><span>紫色水晶<span class="cmd">/m_amethyst</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_rose"><span>粉紅水晶<span class="cmd">/m_rose</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_aqua"><span>海水藍寶<span class="cmd">/m_aqua</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_lapis"><span>青金石珠<span class="cmd">/m_lapis</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_super7"><span>超七水晶<span class="cmd">/m_super7</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_smoky"><span>茶色水晶<span class="cmd">/m_smoky</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_rutile"><span>髮晶鈦晶<span class="cmd">/m_rutile</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_citrine"><span>黃晶切面<span class="cmd">/m_citrine</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_agate"><span>瑪瑙玉髓<span class="cmd">/m_agate</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_catseye"><span>貓眼月光<span class="cmd">/m_catseye</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_jade"><span>翡翠玉石<span class="cmd">/m_jade</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_metal"><span>金屬配件<span class="cmd">/m_metal</span></span></label>
+      </div></div>
+  </div>
+</section>
+<!-- 3 保真設定 -->
+<section class="panel">
+  <h2><span class="num">3</span>商品保真 <span class="hint">預設全開</span></h2>
+  <div class="groups" id="pkeepOpts">
+    <div class="ogroup" data-max="0"><div class="ghead"><span>保持不變</span><span class="gmax">可複選</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="pkeep" value="/keep_count" checked><span>珠子顆數<span class="cmd">/keep_count</span></span></label>
+        <label class="opt"><input type="checkbox" name="pkeep" value="/keep_order" checked><span>排列順序<span class="cmd">/keep_order</span></span></label>
+        <label class="opt"><input type="checkbox" name="pkeep" value="/keep_color" checked><span>顏色不變<span class="cmd">/keep_color</span></span></label>
+        <label class="opt"><input type="checkbox" name="pkeep" value="/keep_charm" checked><span>吊飾造型<span class="cmd">/keep_charm</span></span></label>
+        <label class="opt"><input type="checkbox" name="pkeep" value="/keep_material" checked><span>材質質感<span class="cmd">/keep_material</span></span></label>
+        <label class="opt"><input type="checkbox" name="pkeep" value="/keep_scale" checked><span>尺寸比例<span class="cmd">/keep_scale</span></span></label>
+      </div></div>
+  </div>
+  <p class="scene-note">這是請 AI 保持商品原樣，不能保證完全一致。賣場圖請逐張對照實物：珠子顆數、排列、顏色、吊飾。</p>
+</section>
+</div>
+<div id="prodBTab" class="tab-panel" role="tabpanel" aria-labelledby="prodBTabBtn" hidden>
+<!-- 4 情境與擺件 -->
+<section class="panel">
+  <h2><span class="num">4</span>情境與擺件</h2>
+  <div class="groups" id="sceneOpts2">
+    <div class="ogroup" data-max="1"><div class="ghead"><span>情境風格</span><span class="gmax">最多選 1</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="pscene" value="/scene_velvet"><span>綠絨礦石<span class="cmd">/scene_velvet</span></span></label>
+        <label class="opt"><input type="checkbox" name="pscene" value="/scene_walnut"><span>胡桃木桌<span class="cmd">/scene_walnut</span></span></label>
+        <label class="opt"><input type="checkbox" name="pscene" value="/scene_marble"><span>白大理石<span class="cmd">/scene_marble</span></span></label>
+        <label class="opt"><input type="checkbox" name="pscene" value="/scene_linen"><span>亞麻布面<span class="cmd">/scene_linen</span></span></label>
+        <label class="opt"><input type="checkbox" name="pscene" value="/scene_slate"><span>黑色板岩<span class="cmd">/scene_slate</span></span></label>
+        <label class="opt"><input type="checkbox" name="pscene" value="/scene_floral"><span>乾燥花藝<span class="cmd">/scene_floral</span></span></label>
+        <label class="opt"><input type="checkbox" name="pscene" value="/scene_beach"><span>海邊光影<span class="cmd">/scene_beach</span></span></label>
+        <label class="opt"><input type="checkbox" name="pscene" value="/scene_white"><span>純白淨底<span class="cmd">/scene_white</span></span></label>
+      </div></div>
+    <div class="ogroup" data-max="2"><div class="ghead"><span>擺件</span><span class="gmax">最多選 2</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="pprop" value="/prop_stone"><span>礦石水晶<span class="cmd">/prop_stone</span></span></label>
+        <label class="opt"><input type="checkbox" name="pprop" value="/prop_flower"><span>乾燥花朵<span class="cmd">/prop_flower</span></span></label>
+        <label class="opt"><input type="checkbox" name="pprop" value="/prop_tray"><span>木質托盤<span class="cmd">/prop_tray</span></span></label>
+        <label class="opt"><input type="checkbox" name="pprop" value="/prop_cloth"><span>絲巾布料<span class="cmd">/prop_cloth</span></span></label>
+      </div></div>
+  </div>
+</section>
+<!-- 5 光線 質感 構圖 比例 -->
+<section class="panel">
+  <h2><span class="num">5</span>光線 · 質感 · 比例</h2>
+  <div class="groups" id="lookOpts">
+    <div class="ogroup" data-max="1"><div class="ghead"><span>光線</span><span class="gmax">最多選 1</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="plight" value="/light_side"><span>柔和側光<span class="cmd">/light_side</span></span></label>
+        <label class="opt"><input type="checkbox" name="plight" value="/light_window"><span>自然窗光<span class="cmd">/light_window</span></span></label>
+        <label class="opt"><input type="checkbox" name="plight" value="/light_back"><span>逆光透光<span class="cmd">/light_back</span></span></label>
+        <label class="opt"><input type="checkbox" name="plight" value="/light_warm"><span>暖調氛圍<span class="cmd">/light_warm</span></span></label>
+      </div></div>
+    <div class="ogroup" data-max="2"><div class="ghead"><span>質感強化</span><span class="gmax">最多選 2</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="ptex" value="/tex_crystal"><span>水晶通透<span class="cmd">/tex_crystal</span></span></label>
+        <label class="opt"><input type="checkbox" name="ptex" value="/tex_pearl"><span>珍珠光澤<span class="cmd">/tex_pearl</span></span></label>
+        <label class="opt"><input type="checkbox" name="ptex" value="/tex_metal"><span>金屬光澤<span class="cmd">/tex_metal</span></span></label>
+        <label class="opt"><input type="checkbox" name="ptex" value="/tex_shadow"><span>陰影倒影<span class="cmd">/tex_shadow</span></span></label>
+      </div></div>
+    <div class="ogroup" data-max="1"><div class="ghead"><span>構圖</span><span class="gmax">最多選 1</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="pcomp" value="/comp_flat"><span>俯拍平放<span class="cmd">/comp_flat</span></span></label>
+        <label class="opt"><input type="checkbox" name="pcomp" value="/comp_45"><span>斜角拍攝<span class="cmd">/comp_45</span></span></label>
+        <label class="opt"><input type="checkbox" name="pcomp" value="/comp_macro"><span>微距特寫<span class="cmd">/comp_macro</span></span></label>
+        <label class="opt"><input type="checkbox" name="pcomp" value="/comp_wear"><span>手戴實拍<span class="cmd">/comp_wear</span></span></label>
+      </div></div>
+    <div class="ogroup" data-max="1"><div class="ghead"><span>手部設定</span><span class="gmax">最多選 1</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="phand" value="/hand_f"><span>女性手<span class="cmd">/hand_f</span></span></label>
+        <label class="opt"><input type="checkbox" name="phand" value="/hand_m"><span>男性手<span class="cmd">/hand_m</span></span></label>
+      </div></div>
+    <div class="ogroup" data-max="1"><div class="ghead"><span>輸出比例</span><span class="gmax">最多選 1</span></div>
+      <div class="options">
+        <label class="opt"><input type="checkbox" name="pratio" value="/ratio_1_1"><span>1:1 方形<span class="cmd">/ratio_1_1</span></span></label>
+        <label class="opt"><input type="checkbox" name="pratio" value="/ratio_4_5"><span>4:5 直幅<span class="cmd">/ratio_4_5</span></span></label>
+        <label class="opt"><input type="checkbox" name="pratio" value="/ratio_9_16"><span>9:16 限動<span class="cmd">/ratio_9_16</span></span></label>
+        <label class="opt"><input type="checkbox" name="pratio" value="/ratio_3_4"><span>3:4 直幅<span class="cmd">/ratio_3_4</span></span></label>
+      </div></div>
+  </div>
+  <p class="scene-note">手戴時：你提供手戴照片就維持原樣；需要 AI 生成手時，未選預設為女性手。</p>
+</section>
+</div>
+
 <div id="textTab" class="tab-panel" role="tabpanel" aria-labelledby="textTabBtn" hidden>
   <section class="panel">
     <h2><span class="num">9</span>文字點睛 <span class="hint">選填 · 預設不加字</span></h2>
@@ -520,8 +666,8 @@ textarea{resize:vertical}
 
 <!-- 6 保真 + 補充 -->
 <section class="panel">
-  <h2><span class="num">6</span>保真設定 + 補充要求</h2>
-  <div class="options">
+  <h2><span class="num">6</span><span class="only-person">保真設定 + </span>補充要求</h2>
+  <div class="options only-person">
     <label class="opt"><input type="checkbox" id="keep_id" checked><span>保留身分五官<span class="cmd">/keep_identity</span></span></label>
     <label class="opt"><input type="checkbox" id="keep_scene" checked><span>保留構圖場景<span class="cmd">/keep_scene</span></span></label>
     <label class="opt"><input type="checkbox" id="keep_texture" checked><span>避免過度美顏<span class="cmd">/keep_texture</span></span></label>
@@ -530,11 +676,11 @@ textarea{resize:vertical}
     <label class="opt"><input type="checkbox" id="keep_makeup"><span>保留原本妝容<span class="cmd">/keep_makeup</span></span></label>
   </div>
 
-  <div id="geminiGuardWrap" class="field" hidden style="margin-top:12px">
+  <div id="geminiGuardWrap" class="field only-person" hidden style="margin-top:12px">
     <label class="opt"><input type="checkbox" id="geminiGuard"><span>加入 Gemini 人物原貌提醒（選填）</span></label>
     <p class="scene-note">提醒：同時選擇多項修圖效果時，Gemini 可能出現人物失真或五官變化，建議分批修圖，以保留人物原貌。</p>
   </div>
-  <p class="scene-note" id="sceneConflictNote" role="status" aria-live="polite">選擇新場景時，會自動取消「保留構圖場景」。</p>
+  <p class="scene-note only-person" id="sceneConflictNote" role="status" aria-live="polite">選擇新場景時，會自動取消「保留構圖場景」。</p>
 
   <div class="subhead">補充要求（直接加進指令）</div>
   <textarea id="custom" placeholder="例如：只修男生、女生不要動；腰自然一點；不要磨皮太重；背景衣服不變……"></textarea>
@@ -561,7 +707,8 @@ textarea{resize:vertical}
 
 <footer class="footer">
   凡圖百鍊生 · v1.0 百鍊整合版<br>
-  上方選中文說明，下方輸出短指令。本工具不上傳照片。
+  上方選中文說明，下方輸出短指令。本工具不上傳照片。<br>
+  AI 成品可能與原圖或實物有差異，商品圖請逐張對照實物，並避免功效或療效的宣稱。
 </footer>
 </main>
 
@@ -580,6 +727,17 @@ function vals(name) {
 }
 
 function updateSummary() {
+  if (isProduct()) {
+    $('#summary').innerHTML = `
+    <span>材質 <b>${vals('pmat').length}</b></span>
+    <span>保真 <b>${vals('pkeep').length}</b></span>
+    <span>情境 <b>${vals('pscene').length + vals('pprop').length}</b></span>
+    <span>光線質感 <b>${vals('plight').length + vals('ptex').length}</b></span>
+    <span>構圖比例 <b>${vals('pcomp').length + vals('phand').length + vals('pratio').length}</b></span>
+    <span>文字 <b>${($('#capOn')?.checked && $('#capText')?.value.trim() ? 1 : 0) + ($('#wmOn')?.checked && $('#wmText')?.value.trim() ? 1 : 0)}</b></span>
+  `;
+    return;
+  }
   $('#summary').innerHTML = `
     <span>身形 <b>${vals('body').length}</b></span>
     <span>男性 <b>${vals('male').length}</b></span>
@@ -627,6 +785,7 @@ const SCENE_DESC = {
   '/cyberpunk':'a neon-lit futuristic city street at night, with glowing signs, wet pavement and magenta and cyan lights'
 };
 function buildPrompt() {
+  if (isProduct()) { buildProductPrompt(); return; }
   syncSceneConflict();
   const platform = $('#platform').value;
   const photoType = $('#photoType').value;
@@ -710,7 +869,7 @@ function buildPrompt() {
 
 function clearChecks() {
   $$('input[type="checkbox"]').forEach(x => {
-    if (x.id !== 'autoUpdate' && x.id !== 'capOn' && x.id !== 'wmOn' && x.id !== 'advMode') x.checked = false;
+    if (x.id !== 'autoUpdate' && x.id !== 'capOn' && x.id !== 'wmOn' && x.id !== 'advMode' && x.name !== 'pkeep') x.checked = false;
   });
 }
 
@@ -858,6 +1017,14 @@ function applyPreset(name) {
     jpclear() { phApply('jpclear'); },
     retro() { phApply('retro'); },
     lowlight() { phApply('lowlight'); },
+    pmarble() { ppApply('pmarble'); },
+    plinen() { ppApply('plinen'); },
+    pvelvet() { ppApply('pvelvet'); },
+    pwalnut() { ppApply('pwalnut'); },
+    pslate() { ppApply('pslate'); },
+    pwear() { ppApply('pwear'); },
+    pstory() { ppApply('pstory'); },
+    pwhite() { ppApply('pwhite'); },
     golden() {
       // 金色夕陽底片：人物保守、氛圍加強，並保留髮型與妝容
       $('#photoType').value = 'female';
@@ -896,14 +1063,14 @@ function applyPreset(name) {
 
 // 分頁切換：只切換顯示，不清除任何選項
 function showTab(which) {
-  ['person','scene','text'].forEach(k => {
+  ['person','scene','prodA','prodB','text'].forEach(k => {
     const on = k === which;
     $('#'+k+'Tab').hidden = !on;
     $('#'+k+'TabBtn').classList.toggle('active', on);
     $('#'+k+'TabBtn').setAttribute('aria-selected', String(on));
   });
 }
-['person','scene','text'].forEach(k => $('#'+k+'TabBtn').addEventListener('click', () => showTab(k)));
+['person','scene','prodA','prodB','text'].forEach(k => $('#'+k+'TabBtn').addEventListener('click', () => showTab(k)));
 
 const sceneDescriptions = {
   '/taipei101':'台北101與信義區城市景觀',
@@ -1275,6 +1442,110 @@ $('#advMode').addEventListener('change', () => {
   if (!advOn() && enforceAll()) buildPrompt();
 });
 gmaxRefresh();
+
+/* ===== 商品情境模式 ===== */
+function isProduct() { return document.body.classList.contains('mode-product'); }
+const CUSTOM_PH = $('#custom').placeholder;
+const PD = {
+  cat: { bracelet: 'bracelet', necklace: 'necklace', earrings: 'pair of earrings', ring: 'ring' },
+  mat: {
+    '/m_clear': 'clear quartz',
+    '/m_crackle': 'crackle (ice-flower) quartz',
+    '/m_amethyst': 'amethyst in purple',
+    '/m_rose': 'rose quartz in soft pink',
+    '/m_aqua': 'aquamarine in pale sea blue',
+    '/m_lapis': 'lapis lazuli in deep blue with fine golden flecks',
+    '/m_super7': 'Super Seven quartz with mixed colorful inclusions',
+    '/m_smoky': 'smoky quartz in transparent brown',
+    '/m_rutile': 'rutilated quartz with golden or silver needle inclusions',
+    '/m_citrine': 'faceted citrine in warm golden yellow',
+    '/m_agate': 'agate and chalcedony',
+    '/m_catseye': 'cat’s-eye and moonstone with a silky glow',
+    '/m_jade': 'jade with a smooth waxy luster',
+    '/m_metal': 'gold or silver metal spacers and charms'
+  },
+  scene: {
+    '/scene_velvet': 'a deep green velvet cloth with small mineral specimens nearby',
+    '/scene_walnut': 'a dark walnut wood tabletop with natural grain',
+    '/scene_marble': 'a white marble surface with soft gray veining',
+    '/scene_linen': 'a natural beige linen fabric',
+    '/scene_slate': 'a dark textured slate surface',
+    '/scene_floral': 'a soft neutral surface styled with a dried-flower arrangement',
+    '/scene_beach': 'a natural beach setting with soft sand and gentle sea light'
+  },
+  prop: { '/prop_stone': 'mineral and crystal specimens', '/prop_flower': 'dried flowers', '/prop_tray': 'a small wooden tray', '/prop_cloth': 'a silk scarf or soft fabric' },
+  light: { '/light_side': 'soft side light that reveals texture', '/light_window': 'gentle natural window light', '/light_back': 'soft backlight that makes crystals glow through', '/light_warm': 'warm, cozy ambient light' },
+  tex: { '/tex_crystal': 'crystal transparency and inner clarity', '/tex_pearl': 'pearl-like soft luster', '/tex_metal': 'crisp metallic shine', '/tex_shadow': 'a soft natural shadow and subtle reflection' },
+  comp: { '/comp_flat': 'a top-down flat lay', '/comp_45': 'a 45-degree angle', '/comp_macro': 'a macro close-up showing bead detail', '/comp_wear': 'worn on the wrist' },
+  ratio: { '/ratio_1_1': '1:1 square', '/ratio_4_5': '4:5 portrait', '/ratio_9_16': '9:16 vertical', '/ratio_3_4': '3:4 portrait' },
+  keep: { '/keep_count': 'bead count', '/keep_order': 'bead order', '/keep_color': 'colors', '/keep_charm': 'charm shape', '/keep_material': 'material texture', '/keep_scale': 'proportions' }
+};
+const joinAnd = a => a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : (a[0] || '');
+function buildProductPrompt() {
+  const platform = $('#platform').value, cat = $('#pCat').value;
+  const mat = vals('pmat'), keep = vals('pkeep'), props = vals('pprop'), tex = vals('ptex');
+  const scene = vals('pscene')[0] || '', light = vals('plight')[0] || '', comp = vals('pcomp')[0] || '', ratio = vals('pratio')[0] || '';
+  const custom = $('#custom').value.trim();
+  const item = PD.cat[cat] || 'item', wear = comp === '/comp_wear';
+  const hand = vals('phand')[0] || '/hand_f';
+  const L = ['/productshot', `/platform ${platform}`, `/category ${cat}`];
+  if (mat.length) L.push(mat.join(' '));
+  if (keep.length) L.push(keep.join(' '));
+  const look = [scene, ...props, light, ...tex, comp, ...(wear ? [hand] : []), ratio].filter(Boolean);
+  if (look.length) L.push(look.join(' '));
+  L.push(...capLines(), ...wmLines());
+  const kp = keep.map(v => PD.keep[v]).filter(Boolean);
+  const S = [];
+  if (wear) S.push(`Show the ${item} worn on the wrist. If the photo already has a hand, keep the hand and the ${item} exactly as photographed; otherwise generate ${hand === '/hand_m' ? 'a natural adult male hand' : 'a slender adult female hand with natural skin and short natural nails'}. Keep the ${item} exactly as photographed${kp.length ? ' (' + joinAnd(kp) + ' unchanged)' : ''}. Only improve the background, lighting and cleanliness.`);
+  else if (kp.length) S.push(`Keep the ${item} exactly as photographed: ${joinAnd(kp)} unchanged. Do not add, remove or redraw any beads or parts.`);
+  if (scene === '/scene_white') S.push('Keep the background pure clean white; remove dust and stray marks; keep colors accurate to the real item.');
+  else if (scene) S.push(`Replace the background with ${PD.scene[scene]}; the product should sit naturally in it.`);
+  if (props.length && scene !== '/scene_white') S.push(`Add subtle props such as ${joinAnd(props.map(v => PD.prop[v]))}, never covering the product.`);
+  if (light) S.push(`Lighting: ${PD.light[light]}.`);
+  if (tex.length) S.push(`Emphasize ${joinAnd(tex.map(v => PD.tex[v]))}.`);
+  if (comp && !wear) S.push(`Composition: ${PD.comp[comp]}.`);
+  if (mat.length) S.push(`Bead materials in this piece (for reference only; keep each bead’s exact color and look, do not recolor or swap beads): ${mat.map(v => PD.mat[v]).join('; ')}.`);
+  if (light === '/light_warm' && mat.some(v => ['/m_aqua','/m_lapis','/m_amethyst','/m_rose'].includes(v))) S.push('Keep blue, purple and pink stones true to their color under the warm light.');
+  if (ratio) S.push(`Output aspect ratio ${PD.ratio[ratio]}.` + (ratio === '/ratio_9_16' ? ' Leave empty space at the top and bottom for text and stickers.' : ''));
+  if (S.length) L.push(S.join(' '));
+  if (custom) L.push(`/note ${custom}`);
+  L.push('/apply_on_photo');
+  $('#output').value = L.join('\n');
+  updateSummary();
+  $('#status').textContent = '短指令已產生';
+}
+const PP = {
+  pmarble: { s: '/scene_marble', p: [], l: '/light_window', t: ['/tex_crystal', '/tex_shadow'], c: '/comp_flat', r: '/ratio_1_1' },
+  plinen: { s: '/scene_linen', p: ['/prop_cloth'], l: '/light_side', t: ['/tex_pearl', '/tex_shadow'], c: '/comp_flat', r: '/ratio_4_5' },
+  pvelvet: { s: '/scene_velvet', p: ['/prop_stone'], l: '/light_side', t: ['/tex_crystal', '/tex_metal'], c: '/comp_45', r: '/ratio_1_1' },
+  pwalnut: { s: '/scene_walnut', p: ['/prop_tray'], l: '/light_warm', t: ['/tex_metal', '/tex_shadow'], c: '/comp_flat', r: '/ratio_4_5' },
+  pslate: { s: '/scene_slate', p: [], l: '/light_side', t: ['/tex_crystal', '/tex_shadow'], c: '/comp_flat', r: '/ratio_1_1' },
+  pwear: { s: '', p: [], l: '/light_window', t: ['/tex_shadow'], c: '/comp_wear', h: '/hand_f', r: '/ratio_4_5' },
+  pstory: { s: '/scene_floral', p: [], l: '/light_window', t: ['/tex_crystal'], c: '/comp_flat', r: '/ratio_9_16' },
+  pwhite: { s: '/scene_white', p: [], l: '/light_side', t: ['/tex_crystal'], c: '/comp_flat', r: '/ratio_1_1' }
+};
+function ppApply(n) {
+  const c = PP[n];
+  [c.s, ...c.p, c.l, ...c.t, c.c, c.h, c.r].filter(Boolean).forEach(v => { const x = document.querySelector(`input[value="${v}"]`); if (x) x.checked = true; });
+  $$('input[name="pkeep"]').forEach(x => x.checked = true);
+}
+function prodReset() {
+  ['pmat','pscene','pprop','plight','ptex','pcomp','phand','pratio'].forEach(n => $$(`input[name="${n}"]`).forEach(x => x.checked = false));
+  $$('input[name="pkeep"]').forEach(x => x.checked = true);
+  $('#pCat').value = 'bracelet';
+}
+OPP.push([[V('/scene_white')], ['/prop_stone','/prop_flower','/prop_tray','/prop_cloth'].map(V)]);
+function setMode(m) {
+  document.body.classList.toggle('mode-product', m === 'product');
+  $$('.modebtn').forEach(b => b.classList.toggle('on', b.dataset.mode === m));
+  $('#custom').placeholder = m === 'product' ? '例如：背景再柔和一點；顏色以實物為準；左下角留白放文字……' : CUSTOM_PH;
+  showTab(m === 'product' ? 'prodA' : 'person');
+  try { localStorage.setItem('fantu_mode', m); } catch (e) {}
+  buildPrompt();
+}
+$$('.modebtn').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+['#reset','#stickyReset'].forEach(q => $(q).addEventListener('click', () => { prodReset(); buildPrompt(); }));
+try { if (localStorage.getItem('fantu_mode') === 'product') setMode('product'); } catch (e) {}
 
 syncPlatformOptions();
 buildPrompt();
