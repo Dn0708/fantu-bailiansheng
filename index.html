@@ -505,13 +505,13 @@ textarea{resize:vertical}
 <div id="prodATab" class="tab-panel" role="tabpanel" aria-labelledby="prodATabBtn" hidden>
 <!-- 2 商品與材質 -->
 <section class="panel">
-  <h2><span class="num">2</span>商品與材質 <span class="hint">材質最多選 5 種，不確定就不選</span></h2>
+  <h2><span class="num">2</span>商品與材質 <span class="hint">材質最多選 6 種，不確定就不選</span></h2>
   <div class="field">
     <label for="pCat">商品品類</label>
     <select id="pCat"><option value="bracelet">手串／手鍊</option><option value="necklace">項鍊</option><option value="earrings">耳環</option><option value="ring">戒指</option></select>
   </div>
   <div class="groups" id="matOpts" style="margin-top:14px">
-    <div class="ogroup" data-max="5"><div class="ghead"><span>材質</span><span class="gmax">最多選 5</span></div>
+    <div class="ogroup" data-max="6"><div class="ghead"><span>材質</span><span class="gmax">最多選 6</span></div>
       <div class="options">
         <label class="opt"><input type="checkbox" name="pmat" value="/m_clear"><span>透明水晶<span class="cmd">/m_clear</span></span></label>
         <label class="opt"><input type="checkbox" name="pmat" value="/m_crackle"><span>爆花水晶<span class="cmd">/m_crackle</span></span></label>
@@ -526,7 +526,11 @@ textarea{resize:vertical}
         <label class="opt"><input type="checkbox" name="pmat" value="/m_agate"><span>瑪瑙玉髓<span class="cmd">/m_agate</span></span></label>
         <label class="opt"><input type="checkbox" name="pmat" value="/m_catseye"><span>貓眼月光<span class="cmd">/m_catseye</span></span></label>
         <label class="opt"><input type="checkbox" name="pmat" value="/m_jade"><span>翡翠玉石<span class="cmd">/m_jade</span></span></label>
-        <label class="opt"><input type="checkbox" name="pmat" value="/m_metal"><span>金屬配件<span class="cmd">/m_metal</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_diamond"><span>真鑽鑲嵌<span class="cmd">/m_diamond</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_facet"><span>鑽石切面<span class="cmd">/m_facet</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_cz"><span>水鑽鋯石<span class="cmd">/m_cz</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_gold"><span>黃金飾件<span class="cmd">/m_gold</span></span></label>
+        <label class="opt"><input type="checkbox" name="pmat" value="/m_metal"><span>銀色配件<span class="cmd">/m_metal</span></span></label>
       </div></div>
   </div>
 </section>
@@ -1462,7 +1466,11 @@ const PD = {
     '/m_agate': 'agate and chalcedony',
     '/m_catseye': 'cat’s-eye and moonstone with a silky glow',
     '/m_jade': 'jade with a smooth waxy luster',
-    '/m_metal': 'gold or silver metal spacers and charms'
+    '/m_diamond': 'real diamonds with brilliant white sparkle',
+    '/m_facet': 'diamond-cut faceted gem beads with sharp facets and strong fire',
+    '/m_cz': 'rhinestones or cubic zirconia with bright sparkle',
+    '/m_gold': 'real gold pieces with a true warm gold finish',
+    '/m_metal': 'silver-toned metal spacers and charms with crisp detail'
   },
   scene: {
     '/scene_velvet': 'a deep green velvet cloth with small mineral specimens nearby',
@@ -1505,6 +1513,8 @@ function buildProductPrompt() {
   if (tex.length) S.push(`Emphasize ${joinAnd(tex.map(v => PD.tex[v]))}.`);
   if (comp && !wear) S.push(`Composition: ${PD.comp[comp]}.`);
   if (mat.length) S.push(`Bead materials in this piece (for reference only; keep each bead’s exact color and look, do not recolor or swap beads): ${mat.map(v => PD.mat[v]).join('; ')}.`);
+  if (mat.some(v => ['/m_diamond','/m_facet','/m_cz'].includes(v))) S.push('Keep small stones crisp: same facets and sparkle, do not blur or merge them.');
+  if (mat.includes('/m_gold')) S.push('Keep gold pieces true to real gold, not yellow-green or orange.');
   if (light === '/light_warm' && mat.some(v => ['/m_aqua','/m_lapis','/m_amethyst','/m_rose'].includes(v))) S.push('Keep blue, purple and pink stones true to their color under the warm light.');
   if (ratio) S.push(`Output aspect ratio ${PD.ratio[ratio]}.` + (ratio === '/ratio_9_16' ? ' Leave empty space at the top and bottom for text and stickers.' : ''));
   if (S.length) L.push(S.join(' '));
